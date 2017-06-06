@@ -7,10 +7,13 @@ using System.Collections.Generic;
 
 namespace SharePointPnP.PowerShell.Commands
 {
-    [Cmdlet(VerbsCommon.Get, "SPOSubWebs")]
-    [CmdletHelp("Returns the subwebs", 
-        Category = CmdletHelpCategory.Webs)]
-    public class GetSubWebs : SPOWebCmdlet
+    [Cmdlet(VerbsCommon.Get, "PnPSubWebs")]
+    [CmdletAlias("Get-SPOSubWebs")]
+    [CmdletHelp("Returns the subwebs of the current web", 
+        Category = CmdletHelpCategory.Webs,
+        OutputType = typeof(List<web>),
+        OutputTypeLink = "https://msdn.microsoft.com/en-us/library/microsoft.sharepoint.client.web.aspx")]
+    public class GetSubWebs : PnPWebCmdlet
     {
         [Parameter(Mandatory = false, ValueFromPipeline = true, Position = 0)]
         public WebPipeBind Identity;

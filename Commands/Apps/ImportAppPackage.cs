@@ -1,26 +1,28 @@
-﻿using System.IO;
+﻿using System.Globalization;
+using System.IO;
 using System.Management.Automation;
-using System.Globalization;
-using SharePointPnP.PowerShell.CmdletHelpAttributes;
 using Microsoft.SharePoint.Client;
 using OfficeDevPnP.Core;
+using SharePointPnP.PowerShell.CmdletHelpAttributes;
 
-namespace SharePointPnP.PowerShell.Commands
+namespace SharePointPnP.PowerShell.Commands.Apps
 {
-    [Cmdlet(VerbsData.Import, "SPOAppPackage")]
-    
+    [Cmdlet(VerbsData.Import, "PnPAppPackage")]
+    [CmdletAlias("Import-SPOAppPackage")]
     [CmdletHelp("Adds a SharePoint Addin to a site",
-        DetailedDescription = "This commands requires that you have an addin package to deploy", 
-        Category = CmdletHelpCategory.Apps)]
+        DetailedDescription = "This commands requires that you have an addin package to deploy",
+        Category = CmdletHelpCategory.Apps,
+         OutputType = typeof(AppInstance),
+        OutputTypeLink = "https://msdn.microsoft.com/en-us/library/microsoft.sharepoint.client.appinstance.aspx")]
     [CmdletExample(
-        Code = @"PS:> Import-SPOAppPackage -Path c:\files\demo.app -LoadOnly",
+        Code = @"PS:> Import-PnPAppPackage -Path c:\files\demo.app -LoadOnly",
         Remarks = @"This will load the addin in the demo.app package, but will not install it to the site.
  ", SortOrder = 1)]
     [CmdletExample(
-        Code = @"PS:> Import-SPOAppPackage -Path c:\files\demo.app -Force",
+        Code = @"PS:> Import-PnPAppPackage -Path c:\files\demo.app -Force",
         Remarks = @"This load first activate the addin sideloading feature, upload and install the addin, and deactivate the addin sideloading feature.
     ", SortOrder = 2)]
-    public class ImportAppPackage : SPOWebCmdlet
+    public class ImportAppPackage : PnPWebCmdlet
     {
         [Parameter(Mandatory = true, HelpMessage = "Path pointing to the .app file")]
         public string Path = string.Empty;
@@ -36,18 +38,19 @@ namespace SharePointPnP.PowerShell.Commands
 
         protected override void ExecuteCmdlet()
         {
+            if (!System.IO.Path.IsPathRooted(Path))
+            {
+                Path = System.IO.Path.Combine(SessionState.Path.CurrentFileSystemLocation.Path, Path);
+            }
+
             if (System.IO.File.Exists(Path))
             {
                 if (Force)
                 {
-                    ClientContext.Site.ActivateFeature(Constants.APPSIDELOADINGFEATUREID);
+                    ClientContext.Site.ActivateFeature(Constants.FeatureId_Site_AppSideLoading);
                 }
                 AppInstance instance;
 
-                if (!System.IO.Path.IsPathRooted(Path))
-                {
-                    Path = System.IO.Path.Combine(SessionState.Path.CurrentFileSystemLocation.Path, Path);
-                }
 
                 var appPackageStream = new FileStream(Path, FileMode.Open, FileAccess.Read);
                 if (Locale == -1)
@@ -74,17 +77,17 @@ namespace SharePointPnP.PowerShell.Commands
                 }
                 ClientContext.Load(instance);
                 ClientContext.ExecuteQueryRetry();
-                
+
 
                 if (Force)
                 {
-                    ClientContext.Site.DeactivateFeature(Constants.APPSIDELOADINGFEATUREID);
+                    ClientContext.Site.DeactivateFeature(Constants.FeatureId_Site_AppSideLoading);
                 }
                 WriteObject(instance);
             }
             else
             {
-                WriteError(new ErrorRecord(new IOException(Properties.Resources.FileDoesNotExist), "1", ErrorCategory.InvalidArgument, null));
+                ThrowTerminatingError(new ErrorRecord(new IOException(Properties.Resources.FileDoesNotExist), "1", ErrorCategory.InvalidArgument, null));
             }
         }
     }

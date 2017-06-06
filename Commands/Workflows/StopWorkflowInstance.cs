@@ -7,11 +7,12 @@ using SharePointPnP.PowerShell.Commands.Base.PipeBinds;
 
 namespace SharePointPnP.PowerShell.Commands.Workflows
 {
-    [Cmdlet(VerbsLifecycle.Stop, "SPOWorkflowInstance")]
+    [Cmdlet(VerbsLifecycle.Stop, "PnPWorkflowInstance")]
+    [CmdletAlias("Stop-SPOWorkflowInstance")]
     [CmdletHelp("Stops a workflow instance",
         Category = CmdletHelpCategory.Workflows)]
 
-    public class StopWorkflowInstance : SPOWebCmdlet
+    public class StopWorkflowInstance : PnPWebCmdlet
     {
         [Parameter(Mandatory = true, HelpMessage = "The instance to stop", Position = 0)]
         public WorkflowInstancePipeBind Identity;

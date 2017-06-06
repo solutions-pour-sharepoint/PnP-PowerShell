@@ -6,13 +6,14 @@ using SharePointPnP.PowerShell.Commands.Base.PipeBinds;
 
 namespace SharePointPnP.PowerShell.Commands.Workflows
 {
-    [Cmdlet(VerbsCommon.Remove, "SPOWorkflowDefinition")]
+    [Cmdlet(VerbsCommon.Remove, "PnPWorkflowDefinition")]
+    [CmdletAlias("Remove-SPOWorkflowDefinition")]
     [CmdletHelp("Removes a workflow definition",
         Category = CmdletHelpCategory.Workflows)]
 
-    public class RemoveWorkflowDefinition : SPOWebCmdlet
+    public class RemoveWorkflowDefinition : PnPWebCmdlet
     {
-        [Parameter(Mandatory = true, HelpMessage = "The subscription to remove", Position = 0)]
+        [Parameter(Mandatory = true, HelpMessage = "The definition to remove", Position = 0)]
         public WorkflowDefinitionPipeBind Identity;
 
         protected override void ExecuteCmdlet()

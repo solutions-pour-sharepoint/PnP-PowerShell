@@ -5,10 +5,11 @@ using SharePointPnP.PowerShell.CmdletHelpAttributes;
 
 namespace SharePointPnP.PowerShell.Commands
 {
-    [Cmdlet(VerbsCommon.Set, "SPOIndexedProperties")]
-    [CmdletHelp("Marks values of the propertybag to be indexed by search. Notice that this will overwrite the existing flags, e.g. only the properties you define with the cmdlet will be indexed.",
+    [Cmdlet(VerbsCommon.Set, "PnPIndexedProperties")]
+    [CmdletAlias("Set-SPOIndexedProperties")]
+    [CmdletHelp("Marks values of the propertybag to be indexed by search. Notice that this will overwrite the existing flags, i.e. only the properties you define with the cmdlet will be indexed.",
         Category = CmdletHelpCategory.Webs)]
-    public class SetIndexedProperties : SPOWebCmdlet
+    public class SetIndexedProperties : PnPWebCmdlet
     {
         [Parameter(Mandatory = true)]
         public List<string> Keys;

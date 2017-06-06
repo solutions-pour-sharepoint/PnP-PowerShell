@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ApplicationName" xml:space="preserve">
-    <value>Office Dev PnP PowerShell Library</value>
+    <value>SharePoint PnP PowerShell Library</value>
   </data>
   <data name="CommandNotExecutedDueToHealthscoreValueOf0" xml:space="preserve">
     <value>Command not executed due to healthscore value of {0}</value>
@@ -151,16 +151,16 @@
     <value>List not found</value>
   </data>
   <data name="NoConnection" xml:space="preserve">
-    <value>No connection, please connect first with Connect-SPOnline</value>
+    <value>No connection, please connect first with Connect-PnPOnline</value>
   </data>
   <data name="NoConnectionToDisconnect" xml:space="preserve">
     <value>No connection to disconnect</value>
   </data>
   <data name="NoContextPresent" xml:space="preserve">
-    <value>No context present. Connect first with Connect-SPOnline</value>
+    <value>No context present. Connect first with Connect-PnPOnline</value>
   </data>
   <data name="OfficeDevPnPPowerShellLibrary0" xml:space="preserve">
-    <value>Office Dev PnP PowerShell Library ({0})</value>
+    <value>SharePoint PnP PowerShell Library ({0})</value>
   </data>
   <data name="RemoveContentType" xml:space="preserve">
     <value>Remove content type?</value>
@@ -219,5 +219,65 @@
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="pnp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\pnp.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="RemoveTermGroup0AndAllUnderlyingTermSetsAndTerms" xml:space="preserve">
+    <value>Remove Termgroup '{0}' and all underlying Termsets and Terms? </value>
+  </data>
+  <data name="RemoveTermSet0" xml:space="preserve">
+    <value>Remove Termset '{0}' and it's underlying Terms?</value>
+  </data>
+  <data name="RemoveTerm0AndAllUnderlyingTerms" xml:space="preserve">
+    <value>Remove Term '{0}' and all underlying Terms?</value>
+  </data>
+  <data name="NoAzureADAccessToken" xml:space="preserve">
+    <value>No Azure AD connection, please connect first with Connect-PnPMicrosoftGraph</value>
+  </data>
+  <data name="MicrosoftGraphOAuthAccessTokenExpired" xml:space="preserve">
+    <value>The Azure AD OAuth 2.0 Access Token has expired. Authenticate again using the Connect-PnPMicrosoftGraph cmdlet.</value>
+  </data>
+  <data name="ForceCreationOfExistingGroup0" xml:space="preserve">
+    <value>The Unified Group with MailNickname of {0} already exists. Do you want to create another one?</value>
+  </data>
+  <data name="CopyFile0To1" xml:space="preserve">
+    <value>Copy file '{0}' to '{1}'?</value>
+  </data>
+  <data name="MoveFile0To1" xml:space="preserve">
+    <value>Move file '{0}' to '{1}'?</value>
+  </data>
+  <data name="RenameFile0To1" xml:space="preserve">
+    <value>Rename file '{0}' to '{1}'?</value>
+  </data>
+  <data name="ClearBothRecycleBins" xml:space="preserve">
+    <value>Permanently delete all items in the first and second stage recycle bins?</value>
+  </data>
+  <data name="ClearRecycleBinItem" xml:space="preserve">
+    <value>Permanently delete file '{0}' from the recycle bin?</value>
+  </data>
+  <data name="ClearSecondStageRecycleBin" xml:space="preserve">
+    <value>Permanently delete all the items in the second stage recycle bin?</value>
+  </data>
+  <data name="ClearTenantRecycleBinItem" xml:space="preserve">
+    <value>Permanently delete the site collection previously located at '{0}' from the recycle bin?</value>
+  </data>
+  <data name="MoveFirstStageRecycleBinItemsToSecondStage" xml:space="preserve">
+    <value>Move all items from the first stage recycle bin to the second stage recycle bin?</value>
+  </data>
+  <data name="RestoreRecycleBinItem" xml:space="preserve">
+    <value>Restore the file '{0}' from the recycle bin to its original location?</value>
+  </data>
+  <data name="RestoreRecycleBinItems" xml:space="preserve">
+    <value>Restore all items from the first and second stage recycle bins to their original locations?</value>
+  </data>
+  <data name="ResetTenantRecycleBinItem" xml:space="preserve">
+    <value>Restore the site collection previously located at '{0}' from the recycle bin to its original location?</value>
+  </data>
+  <data name="MoveRecycleBinItemWithLeaf0ToSecondStage" xml:space="preserve">
+    <value>Move recycle bin item with leaf '{0}' to the second stage recycle bin?</value>
+  </data>
+  <data name="RemoveImageRenditionWithName0" xml:space="preserve">
+    <value>Remove Image Rendition with name '{0}'?</value>
+  </data>
+  <data name="CreateSiteWithUrl0" xml:space="preserve">
+    <value>Create site with url '{0}'?</value>
   </data>
 </root>

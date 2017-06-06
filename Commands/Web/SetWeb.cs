@@ -4,10 +4,11 @@ using SharePointPnP.PowerShell.CmdletHelpAttributes;
 
 namespace SharePointPnP.PowerShell.Commands
 {
-    [Cmdlet(VerbsCommon.Set, "SPOWeb")]
+    [Cmdlet(VerbsCommon.Set, "PnPWeb")]
+    [CmdletAlias("Set-SPOWeb")]
     [CmdletHelp("Sets properties on a web",
         Category = CmdletHelpCategory.Webs)]
-    public class SetWeb : SPOWebCmdlet
+    public class SetWeb : PnPWebCmdlet
     {
         [Parameter(Mandatory = false)]
         public string SiteLogoUrl;
@@ -18,24 +19,60 @@ namespace SharePointPnP.PowerShell.Commands
         [Parameter(Mandatory = false)]
         public string Title;
 
+        [Parameter(Mandatory = false)]
+        public string Description;
+
+        [Parameter(Mandatory = false)]
+        public string MasterUrl;
+
+        [Parameter(Mandatory = false)]
+        public string CustomMasterUrl;
+
         protected override void ExecuteCmdlet()
         {
-            if (SiteLogoUrl != null)
+            var dirty = false;
+            
+            foreach (var key in MyInvocation.BoundParameters.Keys)
             {
-                SelectedWeb.SiteLogoUrl = SiteLogoUrl;
-                SelectedWeb.Update();
+                switch (key)
+                {
+                    case "SiteLogoUrl":
+                        SelectedWeb.SiteLogoUrl = SiteLogoUrl;
+                        dirty = true;
+                        break;
+
+                    case "AlternateCssUrl":
+                        SelectedWeb.AlternateCssUrl = AlternateCssUrl;
+                        dirty = true;
+                        break;
+
+                    case "Title":
+                        SelectedWeb.Title = Title;
+                        dirty = true;
+                        break;
+
+                    case "Description":
+                        SelectedWeb.Description = Description;
+                        dirty = true;
+                        break;
+
+                    case "MasterUrl":
+                        SelectedWeb.MasterUrl = MasterUrl;
+                        dirty = true;
+                        break;
+
+                    case "CustomMasterUrl":
+                        SelectedWeb.CustomMasterUrl = CustomMasterUrl;
+                        dirty = true;
+                        break;
+                }
             }
-            if (!string.IsNullOrEmpty(AlternateCssUrl))
+
+            if (dirty)
             {
-                SelectedWeb.AlternateCssUrl = AlternateCssUrl;
                 SelectedWeb.Update();
+                ClientContext.ExecuteQueryRetry();
             }
-            if(!string.IsNullOrEmpty(Title))
-            {
-                SelectedWeb.Title = Title;
-                SelectedWeb.Update();
-            }
-            ClientContext.ExecuteQueryRetry();
         }
     }
 

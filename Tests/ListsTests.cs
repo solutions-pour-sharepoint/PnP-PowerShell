@@ -4,6 +4,7 @@ using Microsoft.SharePoint.Client;
 using System.Management.Automation.Runspaces;
 using System.Collections;
 using System.Linq;
+using System.Management.Automation;
 
 namespace SharePointPnP.PowerShell.Tests
 {
@@ -48,7 +49,7 @@ namespace SharePointPnP.PowerShell.Tests
                 var values = new Hashtable();
                 values.Add("Title", "Test");
 
-                var results = scope.ExecuteCommand("Add-SPOListItem",
+                var results = scope.ExecuteCommand("Add-PnPListItem",
                     new CommandParameter("List", "PnPTestList"),
                     new CommandParameter("Values", values));
 
@@ -64,7 +65,7 @@ namespace SharePointPnP.PowerShell.Tests
             using (var scope = new PSTestScope(true))
             {
 
-                var results = scope.ExecuteCommand("Add-SPOView",
+                var results = scope.ExecuteCommand("Add-PnPView",
                     new CommandParameter("List", "PnPTestList"),
                     new CommandParameter("Title", "TestView"),
                     new CommandParameter("Fields", new[] { "Title" }));
@@ -80,7 +81,7 @@ namespace SharePointPnP.PowerShell.Tests
         {
             using (var scope = new PSTestScope(true))
             {
-                var results = scope.ExecuteCommand("Get-SPOList");
+                var results = scope.ExecuteCommand("Get-PnPList");
 
                 Assert.IsTrue(results.Count > 0);
                 Assert.IsTrue(results[0].BaseObject.GetType() == typeof(Microsoft.SharePoint.Client.List));
@@ -93,7 +94,7 @@ namespace SharePointPnP.PowerShell.Tests
         {
             using (var scope = new PSTestScope(true))
             {
-                var results = scope.ExecuteCommand("Get-SPOList",
+                var results = scope.ExecuteCommand("Get-PnPList",
                     new CommandParameter("Identity", "PnPTestList"));
 
                 Assert.IsTrue(results.Count > 0);
@@ -112,11 +113,10 @@ namespace SharePointPnP.PowerShell.Tests
                 item.Update();
 
                 ctx.ExecuteQueryRetry();
-
             }
             using (var scope = new PSTestScope(true))
             {
-                var results = scope.ExecuteCommand("Get-SPOListItem",
+                var results = scope.ExecuteCommand("Get-PnPListItem",
                     new CommandParameter("List", "PnPTestList"));
 
                 Assert.IsTrue(results.Count > 0);
@@ -124,12 +124,83 @@ namespace SharePointPnP.PowerShell.Tests
             }
         }
 
-        [TestMethod]
+		[TestMethod]
+		public void GetListItemScriptBlockTest()
+		{
+			int itemId;
+			const string updatedItemTitle = "Test Updated";
+
+			// Create item
+			using (var ctx = TestCommon.CreateClientContext())
+			{
+				var list = ctx.Web.GetListByTitle("PnPTestList");
+				var item = list.AddItem(new ListItemCreationInformation());
+				item["Title"] = "Test";
+				item.Update();
+				ctx.ExecuteQueryRetry();
+
+				// Execute Get-PnPListItem cmd-let
+				using (var scope = new PSTestScope(true))
+				{
+					var results = scope.ExecuteCommand("Get-PnPListItem",
+						new CommandParameter("List", "PnPTestList"),
+						new CommandParameter("PageSize", 1),
+						new CommandParameter("ScriptBlock", ScriptBlock.Create(
+							"Param($items) $item = $items[0]; $item['Title'] = '" + updatedItemTitle + "'; $item.Update(); $item.Context.ExecuteQuery()")
+						));
+					itemId = (int)results[0].Properties["Id"].Value;
+				}
+
+				// Check that item's Title was updated
+				var updatedItem = list.GetItemById(itemId);
+				ctx.Load(updatedItem);
+				ctx.ExecuteQueryRetry();
+				Assert.IsTrue((string)updatedItem["Title"] == updatedItemTitle);
+			}
+		}
+
+		[TestMethod]
+		public void GetListItemByQueryScriptBlockTest()
+		{
+			int itemId;
+			const string updatedItemTitle = "Test Updated";
+
+			// Create item
+			using (var ctx = TestCommon.CreateClientContext())
+			{
+				var list = ctx.Web.GetListByTitle("PnPTestList");
+				var item = list.AddItem(new ListItemCreationInformation());
+				item["Title"] = "Test";
+				item.Update();
+				ctx.ExecuteQueryRetry();
+
+				// Execute Get-PnPListItem cmd-let
+				using (var scope = new PSTestScope(true))
+				{
+					var results = scope.ExecuteCommand("Get-PnPListItem",
+						new CommandParameter("List", "PnPTestList"),
+						new CommandParameter("Query", "<View></View>"),
+						new CommandParameter("PageSize", 1),
+						new CommandParameter("ScriptBlock", ScriptBlock.Create(
+							"Param($items) $item = $items[0]; $item['Title'] = '" + updatedItemTitle + "'; $item.Update(); $item.Context.ExecuteQuery()")
+						));
+					itemId = (int)results[0].Properties["Id"].Value;
+				}
+
+				// Check that item's Title was updated
+				var updatedItem = list.GetItemById(itemId);
+				ctx.Load(updatedItem);
+				ctx.ExecuteQueryRetry();
+				Assert.IsTrue((string)updatedItem["Title"] == updatedItemTitle);
+			}
+		}
+
+		[TestMethod]
         public void GetViewTest()
         {
             using (var scope = new PSTestScope(true))
             {
-                var results = scope.ExecuteCommand("Get-SPOView",
+                var results = scope.ExecuteCommand("Get-PnPView",
                     new CommandParameter("List", "PnPTestList")
                     );
 
@@ -143,7 +214,7 @@ namespace SharePointPnP.PowerShell.Tests
         {
             using (var scope = new PSTestScope(true))
             {
-                scope.ExecuteCommand("New-SPOList",
+                scope.ExecuteCommand("New-PnPList",
                     new CommandParameter("Title", "PnPTestList2"),
                     new CommandParameter("Template", ListTemplateType.GenericList));
             }
@@ -167,7 +238,7 @@ namespace SharePointPnP.PowerShell.Tests
 
                 using (var scope = new PSTestScope(true))
                 {
-                    scope.ExecuteCommand("Remove-SPOList",
+                    scope.ExecuteCommand("Remove-PnPList",
                         new CommandParameter("Identity", "PnPTestList2"),
                         new CommandParameter("Force")
                         );
@@ -190,7 +261,7 @@ namespace SharePointPnP.PowerShell.Tests
 
                 using (var scope = new PSTestScope(true))
                 {
-                    scope.ExecuteCommand("Remove-SPOView",
+                    scope.ExecuteCommand("Remove-PnPView",
                         new CommandParameter("List", "PnPTestList"),
                         new CommandParameter("Identity", "TestView"),
                         new CommandParameter("Force")
@@ -212,7 +283,7 @@ namespace SharePointPnP.PowerShell.Tests
 
                 using (var scope = new PSTestScope(true))
                 {
-                    scope.ExecuteCommand("Set-SPOList",
+                    scope.ExecuteCommand("Set-PnPList",
                         new CommandParameter("Identity", "PnPTestList3"),
                         new CommandParameter("Title", "NewPnPTestList3")
                         );

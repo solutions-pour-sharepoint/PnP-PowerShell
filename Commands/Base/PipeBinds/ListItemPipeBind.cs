@@ -1,5 +1,4 @@
 ﻿using Microsoft.SharePoint.Client;
-using System;
 
 namespace SharePointPnP.PowerShell.Commands.Base.PipeBinds
 {
@@ -33,18 +32,9 @@ namespace SharePointPnP.PowerShell.Commands.Base.PipeBinds
             }
         }
 
-        public ListItem Item
-        {
-            get
-            {
-                return _item;
-            }
-        }
+        public ListItem Item => _item;
 
-        public uint Id
-        {
-            get { return _id; }
-        }
+        public uint Id => _id;
 
         internal ListItem GetListItem(List list)
         {

@@ -2,12 +2,17 @@
 using Microsoft.SharePoint.Client;
 using SharePointPnP.PowerShell.CmdletHelpAttributes;
 
-namespace SharePointPnP.PowerShell.Commands.PageLayout
+namespace SharePointPnP.PowerShell.Commands.Publishing
 {
-    [Cmdlet(VerbsCommon.Add, "SPOHtmlPublishingPageLayout")]
+    [Cmdlet(VerbsCommon.Add, "PnPHtmlPublishingPageLayout")]
+    [CmdletAlias("Add-SPOHtmlPublishingPageLayout")]
     [CmdletHelp("Adds a HTML based publishing page layout",
        Category = CmdletHelpCategory.Publishing)]
-    public class AddHtmlPublishingPageLayout : SPOWebCmdlet
+    [CmdletExample(
+        Code = @"PS:> Add-PnPHtmlPublishingPageLayout -Title 'Our custom page layout' -SourceFilePath 'customlayout.aspx' -Description 'A custom page layout' -AssociatedContentTypeID 0x01010901",
+        Remarks = "Uploads the pagelayout 'customlayout.aspx' from the current location to the current site as a 'web part page' pagelayout",
+        SortOrder = 1)]
+    public class AddHtmlPublishingPageLayout : PnPWebCmdlet
     {
         [Parameter(Mandatory = true, HelpMessage = "Path to the file which will be uploaded")]
         public string SourceFilePath = string.Empty;
@@ -21,7 +26,7 @@ namespace SharePointPnP.PowerShell.Commands.PageLayout
         [Parameter(Mandatory = true, HelpMessage = "Associated content type ID")]
         public string AssociatedContentTypeID;
 
-        [Parameter(Mandatory = false, HelpMessage = "Folder hierarchy where the html page layouts will be deployed")]
+        [Parameter(Mandatory = false, HelpMessage = "Folder hierarchy where the HTML page layouts will be deployed")]
         public string DestinationFolderHierarchy;
 
         protected override void ExecuteCmdlet()

@@ -61,11 +61,47 @@ namespace SharePointPnP.PowerShell.Commands.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Office Dev PnP PowerShell Library.
+        ///   Looks up a localized string similar to SharePoint PnP PowerShell Library.
         /// </summary>
         internal static string ApplicationName {
             get {
                 return ResourceManager.GetString("ApplicationName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Permanently delete all items in the first and second stage recycle bins?.
+        /// </summary>
+        internal static string ClearBothRecycleBins {
+            get {
+                return ResourceManager.GetString("ClearBothRecycleBins", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Permanently delete file &apos;{0}&apos; from the recycle bin?.
+        /// </summary>
+        internal static string ClearRecycleBinItem {
+            get {
+                return ResourceManager.GetString("ClearRecycleBinItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Permanently delete all the items in the second stage recycle bin?.
+        /// </summary>
+        internal static string ClearSecondStageRecycleBin {
+            get {
+                return ResourceManager.GetString("ClearSecondStageRecycleBin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Permanently delete the site collection previously located at &apos;{0}&apos; from the recycle bin?.
+        /// </summary>
+        internal static string ClearTenantRecycleBinItem {
+            get {
+                return ResourceManager.GetString("ClearTenantRecycleBinItem", resourceCulture);
             }
         }
         
@@ -84,6 +120,24 @@ namespace SharePointPnP.PowerShell.Commands.Properties {
         internal static string Confirm {
             get {
                 return ResourceManager.GetString("Confirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy file &apos;{0}&apos; to &apos;{1}&apos;?.
+        /// </summary>
+        internal static string CopyFile0To1 {
+            get {
+                return ResourceManager.GetString("CopyFile0To1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Create site with url &apos;{0}&apos;?.
+        /// </summary>
+        internal static string CreateSiteWithUrl0 {
+            get {
+                return ResourceManager.GetString("CreateSiteWithUrl0", resourceCulture);
             }
         }
         
@@ -142,6 +196,15 @@ namespace SharePointPnP.PowerShell.Commands.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The Unified Group with MailNickname of {0} already exists. Do you want to create another one?.
+        /// </summary>
+        internal static string ForceCreationOfExistingGroup0 {
+            get {
+                return ResourceManager.GetString("ForceCreationOfExistingGroup0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This request can take a long time to execute. Continue?.
         /// </summary>
         internal static string GetTenantSite_ExecuteCmdlet_This_request_can_take_a_long_time_to_execute__Continue_ {
@@ -170,7 +233,52 @@ namespace SharePointPnP.PowerShell.Commands.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No connection, please connect first with Connect-SPOnline.
+        ///   Looks up a localized string similar to The Azure AD OAuth 2.0 Access Token has expired. Authenticate again using the Connect-PnPMicrosoftGraph cmdlet..
+        /// </summary>
+        internal static string MicrosoftGraphOAuthAccessTokenExpired {
+            get {
+                return ResourceManager.GetString("MicrosoftGraphOAuthAccessTokenExpired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move file &apos;{0}&apos; to &apos;{1}&apos;?.
+        /// </summary>
+        internal static string MoveFile0To1 {
+            get {
+                return ResourceManager.GetString("MoveFile0To1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move all items from the first stage recycle bin to the second stage recycle bin?.
+        /// </summary>
+        internal static string MoveFirstStageRecycleBinItemsToSecondStage {
+            get {
+                return ResourceManager.GetString("MoveFirstStageRecycleBinItemsToSecondStage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move recycle bin item with leaf &apos;{0}&apos; to the second stage recycle bin?.
+        /// </summary>
+        internal static string MoveRecycleBinItemWithLeaf0ToSecondStage {
+            get {
+                return ResourceManager.GetString("MoveRecycleBinItemWithLeaf0ToSecondStage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Azure AD connection, please connect first with Connect-PnPMicrosoftGraph.
+        /// </summary>
+        internal static string NoAzureADAccessToken {
+            get {
+                return ResourceManager.GetString("NoAzureADAccessToken", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No connection, please connect first with Connect-PnPOnline.
         /// </summary>
         internal static string NoConnection {
             get {
@@ -188,7 +296,7 @@ namespace SharePointPnP.PowerShell.Commands.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No context present. Connect first with Connect-SPOnline.
+        ///   Looks up a localized string similar to No context present. Connect first with Connect-PnPOnline.
         /// </summary>
         internal static string NoContextPresent {
             get {
@@ -197,7 +305,7 @@ namespace SharePointPnP.PowerShell.Commands.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Office Dev PnP PowerShell Library ({0}).
+        ///   Looks up a localized string similar to SharePoint PnP PowerShell Library ({0}).
         /// </summary>
         internal static string OfficeDevPnPPowerShellLibrary0 {
             get {
@@ -248,6 +356,15 @@ namespace SharePointPnP.PowerShell.Commands.Properties {
         internal static string RemoveGroup0 {
             get {
                 return ResourceManager.GetString("RemoveGroup0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove Image Rendition with name &apos;{0}&apos;?.
+        /// </summary>
+        internal static string RemoveImageRenditionWithName0 {
+            get {
+                return ResourceManager.GetString("RemoveImageRenditionWithName0", resourceCulture);
             }
         }
         
@@ -315,6 +432,33 @@ namespace SharePointPnP.PowerShell.Commands.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Remove Term &apos;{0}&apos; and all underlying Terms?.
+        /// </summary>
+        internal static string RemoveTerm0AndAllUnderlyingTerms {
+            get {
+                return ResourceManager.GetString("RemoveTerm0AndAllUnderlyingTerms", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove Termgroup &apos;{0}&apos; and all underlying Termsets and Terms? .
+        /// </summary>
+        internal static string RemoveTermGroup0AndAllUnderlyingTermSetsAndTerms {
+            get {
+                return ResourceManager.GetString("RemoveTermGroup0AndAllUnderlyingTermSetsAndTerms", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove Termset &apos;{0}&apos; and it&apos;s underlying Terms?.
+        /// </summary>
+        internal static string RemoveTermSet0 {
+            get {
+                return ResourceManager.GetString("RemoveTermSet0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Remove the {0} key and its value from the property bag?.
         /// </summary>
         internal static string RemoveThe0KeyAndItsValueFromThePropertyBag {
@@ -338,6 +482,42 @@ namespace SharePointPnP.PowerShell.Commands.Properties {
         internal static string RemoveWeb0 {
             get {
                 return ResourceManager.GetString("RemoveWeb0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rename file &apos;{0}&apos; to &apos;{1}&apos;?.
+        /// </summary>
+        internal static string RenameFile0To1 {
+            get {
+                return ResourceManager.GetString("RenameFile0To1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restore the site collection previously located at &apos;{0}&apos; from the recycle bin to its original location?.
+        /// </summary>
+        internal static string ResetTenantRecycleBinItem {
+            get {
+                return ResourceManager.GetString("ResetTenantRecycleBinItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restore the file &apos;{0}&apos; from the recycle bin to its original location?.
+        /// </summary>
+        internal static string RestoreRecycleBinItem {
+            get {
+                return ResourceManager.GetString("RestoreRecycleBinItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restore all items from the first and second stage recycle bins to their original locations?.
+        /// </summary>
+        internal static string RestoreRecycleBinItems {
+            get {
+                return ResourceManager.GetString("RestoreRecycleBinItems", resourceCulture);
             }
         }
         
