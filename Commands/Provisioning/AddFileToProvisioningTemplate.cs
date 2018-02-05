@@ -89,7 +89,8 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
                     SelectedWeb.ServerRelativeUrl.TrimEnd('/') + "/" + SourceUrl;
 
                 var file = SelectedWeb.GetFileByServerRelativeUrl(serverRelativeUrl);
-                var fileName = SourceUrl.IndexOf("/") > 0 ? SourceUrl.Substring(SourceUrl.LastIndexOf('/') + 1) : SourceUrl;
+
+                var fileName = file.EnsureProperty(f => f.Name);
                 var folderRelativeUrl = serverRelativeUrl.Substring(0, serverRelativeUrl.Length - fileName.Length - 1);
                 var folderWebRelativeUrl = HttpUtility.UrlKeyValueDecode(folderRelativeUrl.Substring(SelectedWeb.ServerRelativeUrl.TrimEnd('/').Length + 1));
                 if (ClientContext.HasPendingRequest) ClientContext.ExecuteQuery();
