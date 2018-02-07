@@ -74,7 +74,6 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
         [Parameter(Mandatory = false, Position = 7, ParameterSetName = "RemoteSourceFile", HelpMessage = "Specifies if webparts has to be exported when exporting a remote file")]
         public SwitchParameter IncludeWebParts;
 
-
         protected override void ProcessRecord()
         {
             if (!System.IO.Path.IsPathRooted(Path))
@@ -157,7 +156,7 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
 
         private IEnumerable<WebPart> ExtractWebParts(SPFile file)
         {
-            if (string.Compare(System.IO.Path.GetExtension(file.Name), ".aspx", true)==0)
+            if (string.Compare(System.IO.Path.GetExtension(file.Name), ".aspx", true) == 0)
             {
                 foreach (var spwp in SelectedWeb.GetWebParts(file.ServerRelativeUrl))
                 {
@@ -241,6 +240,12 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
             {
                 ((ICommitableFileConnector)template.Connector).Commit();
             }
+
+            var existing = template.Files.FirstOrDefault(f =>
+                f.Src == $"{container}/{fileName}"
+                && f.Folder == folder);
+            if(existing != null)
+            template.Files.Remove(existing);
 
             var newFile = new OfficeDevPnP.Core.Framework.Provisioning.Model.File
             {
