@@ -103,6 +103,9 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
 
                 var file = SelectedWeb.GetFileByServerRelativeUrl(serverRelativeUrl);
                 ClientContext.Load(file, f => f.ServerRelativeUrl);
+                ClientContext.Load(SelectedWeb.Lists, lsts => lsts.Include(lst => lst.Id, lst => lst.Title, lst => lst.RootFolder.ServerRelativeUrl));
+                ClientContext.ExecuteQuery();
+
                 var fileName = file.EnsureProperty(f => f.Name);
                 var folderRelativeUrl = serverRelativeUrl.Substring(0, serverRelativeUrl.Length - fileName.Length - 1);
                 var folderWebRelativeUrl = HttpUtility.UrlKeyValueDecode(folderRelativeUrl.Substring(SelectedWeb.ServerRelativeUrl.TrimEnd('/').Length + 1));
@@ -185,11 +188,14 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
         private string Tokenize(string input)
         {
             if (string.IsNullOrEmpty(input)) return input;
-            //foreach (var list in lists)
-            //{
-            //    input = input.ReplaceCaseInsensitive(web.Url.TrimEnd('/') + "/" + list.GetWebRelativeUrl(), "{listurl:" + Regex.Escape(list.Title) + "}");
-            //    input = input.ReplaceCaseInsensitive(list.RootFolder.ServerRelativeUrl, "{listurl:" + Regex.Escape(list.Title)+ "}");
-            //}
+
+            foreach (var list in SelectedWeb.Lists)
+            {
+                input = input
+                    .ReplaceCaseInsensitive(list.Id.ToString("D"), "{listid:" + Regex.Escape(list.Title) + "}")
+                    .ReplaceCaseInsensitive(SelectedWeb.Url.TrimEnd('/') + "/" + list.GetWebRelativeUrl(), "{listurl:" + Regex.Escape(list.Title) + "}")
+                    .ReplaceCaseInsensitive(list.RootFolder.ServerRelativeUrl, "{listurl:" + Regex.Escape(list.Title) + "}");
+            }
             return input.ReplaceCaseInsensitive(SelectedWeb.Url, "{site}")
                 .ReplaceCaseInsensitive(SelectedWeb.ServerRelativeUrl, "{site}")
                 .ReplaceCaseInsensitive(SelectedWeb.Id.ToString(), "{siteid}")
@@ -200,25 +206,22 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
 
         private Dictionary<string, string> GetProperties(SPFile file, byte[] rawContent)
         {
-            if (string.Compare(System.IO.Path.GetExtension(file.Name), ".aspx", true) == 0)
-            {
-                var content = Encoding.UTF8.GetString(rawContent);
+            var context = (ClientContext)SelectedWeb.Context;
+            var listItem = file.ListItemAllFields;
+            context.Load(listItem);
 
-                var propsMatch = Regex.Match(content, @"<SharePoint:CTFieldRefs.*?>(.*)</SharePoint:CTFieldRefs>", RegexOptions.Singleline);
-                if (propsMatch.Success)
-                {
-                    var xml = $"<wrapper xmlns:mso='mso' xmlns:msdt='msdt'>{propsMatch.Groups[1].Value}</wrapper>";
-                    var propsXml = XElement.Parse(xml);
-                    var xmlNsMgr = new XmlNamespaceManager(new NameTable());
-                    xmlNsMgr.AddNamespace("mso", "mso");
-                    xmlNsMgr.AddNamespace("msdt", "msdt");
-                    var propNodes = propsXml.XPathSelectElement("//mso:CustomDocumentProperties", xmlNsMgr);
-                    return propNodes.Elements().ToDictionary(
-                        n => n.Name.LocalName,
-                        n => Tokenize(n.Value)
-                        );
-                }
+
+            try
+            {
+                context.ExecuteQuery();
+
             }
+            catch (ServerException ex)
+            {
+
+                throw;
+            }
+
             return null;
         }
 
@@ -244,8 +247,8 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
             var existing = template.Files.FirstOrDefault(f =>
                 f.Src == $"{container}/{fileName}"
                 && f.Folder == folder);
-            if(existing != null)
-            template.Files.Remove(existing);
+            if (existing != null)
+                template.Files.Remove(existing);
 
             var newFile = new OfficeDevPnP.Core.Framework.Provisioning.Model.File
             {
