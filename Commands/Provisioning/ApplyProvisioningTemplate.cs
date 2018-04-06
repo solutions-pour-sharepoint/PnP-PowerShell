@@ -75,6 +75,10 @@ PS:> Apply-PnPProvisioningTemplate -Path NewTemplate.xml -ExtensibilityHandlers 
 
         [Parameter(Mandatory = false, HelpMessage = "If set content types will be provisioned if the target web is a subweb.")]
         public SwitchParameter ProvisionContentTypesToSubWebs;
+
+        [Parameter(Mandatory = false, HelpMessage = "If set fields will be provisioned if the target web is a subweb.")]
+        public SwitchParameter ProvisionFieldsToSubWebs;
+
         [Parameter(Mandatory = false, HelpMessage = "Override the RemoveExistingNodes attribute in the Navigation elements of the template. If you specify this value the navigation nodes will always be removed before adding the nodes in the template")]
         public SwitchParameter ClearNavigation;
 
@@ -114,6 +118,10 @@ PS:> Apply-PnPProvisioningTemplate -Path NewTemplate.xml -ExtensibilityHandlers 
                     if (!System.IO.Path.IsPathRooted(Path))
                     {
                         Path = System.IO.Path.Combine(SessionState.Path.CurrentFileSystemLocation.Path, Path);
+                    }
+                    if(!System.IO.File.Exists(Path))
+                    {
+                        throw new FileNotFoundException($"File not found");
                     }
                     if (!string.IsNullOrEmpty(ResourceFolder))
                     {
@@ -327,6 +335,7 @@ PS:> Apply-PnPProvisioningTemplate -Path NewTemplate.xml -ExtensibilityHandlers 
             applyingInformation.IgnoreDuplicateDataRowErrors = IgnoreDuplicateDataRowErrors;
             applyingInformation.ClearNavigation = ClearNavigation;
             applyingInformation.ProvisionContentTypesToSubWebs = ProvisionContentTypesToSubWebs;
+            applyingInformation.ProvisionFieldsToSubWebs = ProvisionFieldsToSubWebs;
 
             SelectedWeb.ApplyProvisioningTemplate(provisioningTemplate, applyingInformation);
 
