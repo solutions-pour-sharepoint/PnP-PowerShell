@@ -7,14 +7,14 @@ using SharePointPnP.PowerShell.CmdletHelpAttributes;
 namespace SharePointPnP.PowerShell.Commands
 {
     [Cmdlet(VerbsCommon.Get, "PnPRequestAccessEmails")]
-    [CmdletAlias("Get-SPORequestAccessEmails")]
     [CmdletHelp("Returns the request access e-mail addresses",
+        SupportedPlatform = CmdletSupportedPlatform.Online,
         Category = CmdletHelpCategory.Webs,
         OutputType = typeof(List<string>))]
     [CmdletExample(
-       Code = @"PS:> Get-PnPRequestAccessEmails",
-       Remarks = "This will return all the request access e-mail addresses for the current web",
-       SortOrder = 1)]
+        Code = @"PS:> Get-PnPRequestAccessEmails",
+        Remarks = "This will return all the request access e-mail addresses for the current web",
+        SortOrder = 1)]
     public class GetRequestAccessEmails : PnPWebCmdlet
     {
         protected override void ExecuteCmdlet()

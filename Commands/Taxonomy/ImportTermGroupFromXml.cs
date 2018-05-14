@@ -12,7 +12,6 @@ using File = System.IO.File;
 namespace SharePointPnP.PowerShell.Commands.Taxonomy
 {
     [Cmdlet(VerbsData.Import, "PnPTermGroupFromXml", SupportsShouldProcess = true)]
-    [CmdletAlias("Import-SPOTermGroupFromXml")]
     [CmdletHelp("Imports a taxonomy TermGroup from either the input or from an XML file.",
         Category = CmdletHelpCategory.Taxonomy)]
     [CmdletExample(
@@ -35,10 +34,10 @@ namespace SharePointPnP.PowerShell.Commands.Taxonomy
         protected override void ExecuteCmdlet()
         {
             var template = new ProvisioningTemplate();
-            template.Security = null;
-            template.Features = null;
-            template.CustomActions = null;
-            template.ComposedLook = null;
+            //template.Security = null;
+            //template.Features = null;
+            //template.CustomActions = null;
+            //template.ComposedLook = null;
 
             template.Id = "TAXONOMYPROVISIONING";
 

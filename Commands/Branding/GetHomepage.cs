@@ -5,8 +5,8 @@ using SharePointPnP.PowerShell.CmdletHelpAttributes;
 namespace SharePointPnP.PowerShell.Commands.Branding
 {
     [Cmdlet(VerbsCommon.Get, "PnPHomePage")]
-    [CmdletAlias("Get-SPOHomePage")]
-    [CmdletHelp("Returns the URL to the home page", 
+    [CmdletHelp("Return the homepage",
+        "Returns the URL to the page set as home page", 
         Category = CmdletHelpCategory.Branding,
         OutputType = typeof(string))]
     [CmdletExample(Code = @"PS:> Get-PnPHomePage",

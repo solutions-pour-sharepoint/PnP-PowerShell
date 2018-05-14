@@ -13,8 +13,7 @@ using System.Threading.Tasks;
 
 namespace SharePointPnP.PowerShell.Commands.Provisioning
 {
-    [Cmdlet("Remove", "PnPFileFromProvisioningTemplate")]
-    [CmdletAlias("Remove-SPOFileFromProvisioningTemplate")]
+    [Cmdlet(VerbsCommon.Remove, "PnPFileFromProvisioningTemplate")]
     [CmdletHelp("Removes a file from a PnP Provisioning Template",
         Category = CmdletHelpCategory.Provisioning)]
     [CmdletExample(
@@ -39,7 +38,7 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
                 Path = System.IO.Path.Combine(SessionState.Path.CurrentFileSystemLocation.Path, Path);
             }
             // Load the template
-            ProvisioningTemplate template = LoadProvisioningTemplate
+            ProvisioningTemplate template = ReadProvisioningTemplate
                 .LoadProvisioningTemplateFromFile(Path,
                 TemplateProviderExtensions);
 

@@ -6,7 +6,6 @@ using SharePointPnP.PowerShell.Commands.Base.PipeBinds;
 namespace SharePointPnP.PowerShell.Commands.ContentTypes
 {
     [Cmdlet(VerbsCommon.Add, "PnPContentTypeToList")]
-    [CmdletAlias("Add-SPOContentTypeToList")]
     [CmdletHelp("Adds a new content type to a list", 
         Category = CmdletHelpCategory.ContentTypes)]
     [CmdletExample(
@@ -15,7 +14,7 @@ namespace SharePointPnP.PowerShell.Commands.ContentTypes
         SortOrder = 1)]
     public class AddContentTypeToList : PnPWebCmdlet
     {
-        [Parameter(Mandatory = true, HelpMessage = "Specifies the list the content type needs to be added to")]
+        [Parameter(Mandatory = true, HelpMessage = "Specifies the list to which the content type needs to be added")]
         public ListPipeBind List;
 
         [Parameter(Mandatory = true, HelpMessage = "Specifies the content type that needs to be added to the list")]

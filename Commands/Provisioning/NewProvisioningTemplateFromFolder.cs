@@ -15,7 +15,6 @@ using OfficeDevPnP.Core.Framework.Provisioning.Connectors.OpenXML.Model;
 namespace SharePointPnP.PowerShell.Commands.Provisioning
 {
     [Cmdlet(VerbsCommon.New, "PnPProvisioningTemplateFromFolder")]
-    [CmdletAlias("New-SPOProvisioningTemplateFromFolder")]
     [CmdletHelp("Generates a provisioning template from a given folder, including only files that are present in that folder",
         Category = CmdletHelpCategory.Provisioning)]
     [CmdletExample(
@@ -207,7 +206,7 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
             if (!AsIncludeFile) return xml;
             XElement xElement = XElement.Parse(xml);
             // Get the Files Element
-            XNamespace pnp = XMLConstants.PROVISIONING_SCHEMA_NAMESPACE_2015_12;
+            XNamespace pnp = XMLConstants.PROVISIONING_SCHEMA_NAMESPACE_2017_05;
 
             var filesElement = xElement.Descendants(pnp + "Files").FirstOrDefault();
             if (filesElement != null)
@@ -271,6 +270,21 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
                 case XMLPnPSchemaVersion.V201605:
                     {
                         formatter = XMLPnPSchemaFormatter.GetSpecificFormatter(XMLConstants.PROVISIONING_SCHEMA_NAMESPACE_2016_05);
+                        break;
+                    }
+                case XMLPnPSchemaVersion.V201705:
+                    {
+                        formatter = XMLPnPSchemaFormatter.GetSpecificFormatter(XMLConstants.PROVISIONING_SCHEMA_NAMESPACE_2017_05);
+                        break;
+                    }
+                case XMLPnPSchemaVersion.V201801:
+                    {
+                        formatter = XMLPnPSchemaFormatter.GetSpecificFormatter(XMLConstants.PROVISIONING_SCHEMA_NAMESPACE_2018_01);
+                        break;
+                    }
+                case XMLPnPSchemaVersion.V201805:
+                    {
+                        formatter = XMLPnPSchemaFormatter.GetSpecificFormatter(XMLConstants.PROVISIONING_SCHEMA_NAMESPACE_2018_05);
                         break;
                     }
             }

@@ -11,7 +11,6 @@ using SharePointPnP.PowerShell.Commands.Base.PipeBinds;
 namespace SharePointPnP.PowerShell.Commands.WebParts
 {
     [Cmdlet(VerbsCommon.Get, "PnPWebPart")]
-    [CmdletAlias("Get-SPOWebPart")]
     [CmdletHelp("Returns a webpart definition object",
         Category = CmdletHelpCategory.WebParts,
         OutputType=typeof(IEnumerable<WebPartDefinition>),
@@ -28,7 +27,7 @@ namespace SharePointPnP.PowerShell.Commands.WebParts
         [Alias("PageUrl")]
         public string ServerRelativePageUrl = string.Empty;
 
-        [Parameter(Mandatory = false, ValueFromPipeline = true)]
+        [Parameter(Mandatory = false, ValueFromPipeline = true, HelpMessage = "The identity of the webpart, this can be the webpart guid or an webpart object")]
         public WebPartPipeBind Identity;
 
         protected override void ExecuteCmdlet()

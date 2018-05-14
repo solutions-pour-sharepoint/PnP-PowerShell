@@ -16,7 +16,6 @@ using System.Collections;
 namespace SharePointPnP.PowerShell.Commands.Provisioning
 {
     [Cmdlet(VerbsCommon.Get, "PnPProvisioningTemplate", SupportsShouldProcess = true)]
-    [CmdletAlias("Get-SPOProvisioningTemplate")]
     [CmdletHelp("Generates a provisioning template from a web",
         Category = CmdletHelpCategory.Provisioning)]
     [CmdletExample(
@@ -74,6 +73,10 @@ PS:> Get-PnPProvisioningTemplate -Out NewTemplate.xml -ExtensibilityHandlers $ha
         Code = "PS:> Get-PnPProvisioningTemplate -Out template.pnp -ContentTypeGroups \"Group A\",\"Group B\"",
         Remarks = @"Extracts a provisioning template in Office Open XML from the current web, but only processes content types from the to given content type groups.",
         SortOrder = 12)]
+    [CmdletExample(
+        Code = @"PS:> Get-PnPProvisioningTemplate -Out template.pnp -ExcludeContentTypesFromSyndication",
+        Remarks = "Extracts a provisioning template in Office Open XML from the current web, excluding content types provisioned through content type syndication (content type hub), in order to prevent provisioning errors if the target also provision the content type using syndication.",
+        SortOrder = 13)]
     [CmdletRelatedLink(
         Text = "Encoding",
         Url = "https://msdn.microsoft.com/en-us/library/system.text.encoding_properties.aspx")]
@@ -162,6 +165,9 @@ PS:> Get-PnPProvisioningTemplate -Out NewTemplate.xml -ExtensibilityHandlers $ha
 
         [Parameter(Mandatory = false, HelpMessage = "Returns the template as an in-memory object, which is an instance of the ProvisioningTemplate type of the PnP Core Component. It cannot be used together with the -Out parameter.")]
         public SwitchParameter OutputInstance;
+
+        [Parameter(Mandatory = false, HelpMessage = "Specify whether or not content types issued from a content hub should be exported. By default, these content types are included.")]
+        public SwitchParameter ExcludeContentTypesFromSyndication;
 
         protected override void ExecuteCmdlet()
         {
@@ -255,6 +261,13 @@ PS:> Get-PnPProvisioningTemplate -Out NewTemplate.xml -ExtensibilityHandlers $ha
             }
 #if !SP2013
             creationInformation.PersistMultiLanguageResources = PersistMultiLanguageResources;
+            if(extension == ".pnp")
+            {
+                // if file is of pnp format, persist all files
+                creationInformation.PersistBrandingFiles = true;
+                creationInformation.PersistPublishingFiles = true;
+                creationInformation.PersistMultiLanguageResources = true;
+            }
             if (!string.IsNullOrEmpty(ResourceFilePrefix))
             {
                 creationInformation.ResourceFilePrefix = ResourceFilePrefix;
@@ -356,6 +369,8 @@ PS:> Get-PnPProvisioningTemplate -Out NewTemplate.xml -ExtensibilityHandlers $ha
                 }
             }
 
+            creationInformation.IncludeContentTypesFromSyndication = !ExcludeContentTypesFromSyndication.ToBool();
+
             var template = SelectedWeb.GetProvisioningTemplate(creationInformation);
 
             // Set metadata for template, if any
@@ -394,7 +409,29 @@ PS:> Get-PnPProvisioningTemplate -Out NewTemplate.xml -ExtensibilityHandlers $ha
                         }
                     case XMLPnPSchemaVersion.V201512:
                         {
+#pragma warning disable CS0618 // Type or member is obsolete
                             formatter = XMLPnPSchemaFormatter.GetSpecificFormatter(XMLConstants.PROVISIONING_SCHEMA_NAMESPACE_2015_12);
+#pragma warning restore CS0618 // Type or member is obsolete
+                            break;
+                        }
+                    case XMLPnPSchemaVersion.V201605:
+                        {
+                            formatter = XMLPnPSchemaFormatter.GetSpecificFormatter(XMLConstants.PROVISIONING_SCHEMA_NAMESPACE_2016_05);
+                            break;
+                        }
+                    case XMLPnPSchemaVersion.V201705:
+                        {
+                            formatter = XMLPnPSchemaFormatter.GetSpecificFormatter(XMLConstants.PROVISIONING_SCHEMA_NAMESPACE_2017_05);
+                            break;
+                        }
+                    case XMLPnPSchemaVersion.V201801:
+                        {
+                            formatter = XMLPnPSchemaFormatter.GetSpecificFormatter(XMLConstants.PROVISIONING_SCHEMA_NAMESPACE_2018_01);
+                            break;
+                        }
+                    case XMLPnPSchemaVersion.V201805:
+                        {
+                            formatter = XMLPnPSchemaFormatter.GetSpecificFormatter(XMLConstants.PROVISIONING_SCHEMA_NAMESPACE_2018_05);
                             break;
                         }
                 }

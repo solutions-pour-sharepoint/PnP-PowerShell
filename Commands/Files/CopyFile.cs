@@ -12,7 +12,6 @@ using File = Microsoft.SharePoint.Client.File;
 namespace SharePointPnP.PowerShell.Commands.Files
 {
     [Cmdlet(VerbsCommon.Copy, "PnPFile", SupportsShouldProcess = true, DefaultParameterSetName = "SOURCEURL")]
-    [CmdletAlias("Copy-SPOFile")]
     [CmdletHelp("Copies a file or folder to a different location",
         Category = CmdletHelpCategory.Files)]
     [CmdletExample(
@@ -148,8 +147,9 @@ namespace SharePointPnP.PowerShell.Commands.Files
                 {
                     try
                     {
+                        var targetFile = UrlUtility.Combine(TargetUrl, file.Name);
                         // If src/dst are on the same Web, then try using CopyTo - backwards compability
-                        file.CopyTo(TargetUrl, OverwriteIfAlreadyExists);
+                        file.CopyTo(targetFile, OverwriteIfAlreadyExists);
                         _sourceContext.ExecuteQueryRetry();
                         return;
                     }

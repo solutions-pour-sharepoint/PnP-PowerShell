@@ -107,7 +107,8 @@ namespace SharePointPnP.PowerShell.Commands.Taxonomy
             {
                 Id = Guid.NewGuid();
             }
-            var term = termSet.CreateTerm(Name, Lcid, Id);
+            var termName = TaxonomyExtensions.NormalizeName(Name);
+            var term = termSet.CreateTerm(termName, Lcid, Id);
             ClientContext.Load(term);
             ClientContext.ExecuteQueryRetry();
             term.SetDescription(Description, Lcid);
@@ -121,12 +122,12 @@ namespace SharePointPnP.PowerShell.Commands.Taxonomy
             var localCustomProperties = LocalCustomProperties ?? new Hashtable();
             foreach (var key in localCustomProperties.Keys)
             {
-                term.SetCustomProperty(key as string, localCustomProperties[key] as string);
+                term.SetLocalCustomProperty(key as string, localCustomProperties[key] as string);
             }
             termStore.CommitAll();
             ClientContext.Load(term);
             ClientContext.ExecuteQueryRetry();
-            WriteObject(termSet);
+            WriteObject(term);
         }
 
     }

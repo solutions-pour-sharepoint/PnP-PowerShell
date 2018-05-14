@@ -6,9 +6,12 @@ using SharePointPnP.PowerShell.Commands.Base.PipeBinds;
 namespace SharePointPnP.PowerShell.Commands.Site
 {
     [Cmdlet(VerbsLifecycle.Uninstall, "PnPSolution")]
-    [CmdletAlias("Uninstall-SPOSolution")]
     [CmdletHelp("Uninstalls a sandboxed solution from a site collection",
         Category = CmdletHelpCategory.Sites)]
+    [CmdletExample(
+        Code = @"PS:> Uninstall-PnPSolution -PackageId c2f5b025-7c42-4d3a-b579-41da3b8e7254 -SourceFilePath mypackage.wsp",
+        Remarks = "Removes the package to the current site",
+        SortOrder = 1)]
     public class UninstallSolution : PnPCmdlet
     {
         [Parameter(Mandatory = true, HelpMessage="ID of the solution, from the solution manifest")]

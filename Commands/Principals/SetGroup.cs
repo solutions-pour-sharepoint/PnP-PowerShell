@@ -7,8 +7,7 @@ using SharePointPnP.PowerShell.Commands.Enums;
 
 namespace SharePointPnP.PowerShell.Commands.Principals
 {
-    [Cmdlet("Set", "PnPGroup")]
-    [CmdletAlias("Set-SPOGroup")]
+    [Cmdlet(VerbsCommon.Set, "PnPGroup")]
     [CmdletHelp("Updates a group",
         Category = CmdletHelpCategory.Principals)]
     [CmdletExample(

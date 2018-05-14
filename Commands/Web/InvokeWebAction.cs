@@ -9,7 +9,6 @@ using System.Management.Automation;
 namespace SharePointPnP.PowerShell.Commands
 {
     [Cmdlet(VerbsLifecycle.Invoke, "PnPWebAction", SupportsShouldProcess = true)]
-    [CmdletAlias("Invoke-SPOWebAction")]
     [CmdletHelp("Executes operations on web, lists and list items.",
         Category = CmdletHelpCategory.Webs)]
     [CmdletExample(
@@ -41,7 +40,6 @@ namespace SharePointPnP.PowerShell.Commands
         public string[] WebProperties;
 
         [Parameter(Mandatory = false, HelpMessage = "Name of list if you only want to handle one specific list and its list items")]
-
         public string ListName { get; set; }
 
         [Parameter(Mandatory = false, HelpMessage = "Function to be executed on the list. There is one input parameter of type List")]
@@ -76,7 +74,6 @@ namespace SharePointPnP.PowerShell.Commands
 
         [Parameter(Mandatory = false, HelpMessage = "Will skip the counting process; by doing this you will not get an estimated time remaining")]
         public SwitchParameter SkipCounting;
-
 
         protected override void ExecuteCmdlet()
         {

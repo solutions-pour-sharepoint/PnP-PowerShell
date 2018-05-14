@@ -2,6 +2,9 @@
 
 namespace SharePointPnP.PowerShell.CmdletHelpAttributes
 {
+    /// <summary>
+    /// The available categories for cmdlet help categorization
+    /// </summary>
     public enum CmdletHelpCategory
     {
         [EnumMember(Value = "Tenant Administration")]
@@ -40,6 +43,17 @@ namespace SharePointPnP.PowerShell.CmdletHelpAttributes
         [EnumMember(Value = "Microsoft Graph")]
         Graph = 23,
         [EnumMember(Value = "SharePoint Recycle Bin")]
-        RecycleBin = 24
+        RecycleBin = 24,
+        [EnumMember(Value = "SharePoint WebHooks")]
+        Webhooks = 25,
+        [EnumMember(Value = "Records Management")]
+        RecordsManagement = 26,
+        [EnumMember(Value = "Client-Side Pages")]
+        ClientSidePages = 27,
+        [EnumMember(Value = "Diagnostic utilites")]
+        Diagnostic = 28,
+        [EnumMember(Value = "Site Designs")]
+        SiteDesigns = 29
+            
     }
 }

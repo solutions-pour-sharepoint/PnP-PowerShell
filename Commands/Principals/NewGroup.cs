@@ -6,8 +6,7 @@ using System;
 
 namespace SharePointPnP.PowerShell.Commands.Principals
 {
-    [Cmdlet("New", "PnPGroup")]
-    [CmdletAlias("New-SPOGroup")]
+    [Cmdlet(VerbsCommon.New, "PnPGroup")]
     [CmdletHelp("Adds group to the Site Groups List and returns a group object",
         Category = CmdletHelpCategory.Principals,
         OutputType = typeof(Group),

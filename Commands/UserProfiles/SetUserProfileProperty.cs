@@ -9,11 +9,11 @@ using System.Linq;
 namespace SharePointPnP.PowerShell.Commands.UserProfiles
 {
     [Cmdlet(VerbsCommon.Set, "PnPUserProfileProperty")]
-    [CmdletAlias("Set-SPOUserProfileProperty")]
     [CmdletHelp(@"Office365 only: Uses the tenant API to retrieve site information.
 
 You must connect to the tenant admin website (https://:<tenant>-admin.sharepoint.com) with Connect-PnPOnline in order to use this command. 
 ", DetailedDescription = "Requires a connection to a SharePoint Tenant Admin site.",
+        SupportedPlatform = CmdletSupportedPlatform.Online,
         Category = CmdletHelpCategory.UserProfiles)]
     [CmdletExample(
         Code = @"PS:> Set-PnPUserProfileProperty -Account 'user@domain.com' -Property 'SPS-Location' -Value 'Stockholm'",
@@ -32,10 +32,13 @@ You must connect to the tenant admin website (https://:<tenant>-admin.sharepoint
         public string PropertyName;
 
         [Parameter(Mandatory = true, HelpMessage = "The value to set in the case of a single value property", ParameterSetName = "Single")]
+        [AllowEmptyString]
+        [AllowNull]
         public string Value;
 
         [Parameter(Mandatory = true, HelpMessage = "The values set in the case of a multi value property, e.g. \"Value 1\",\"Value 2\"",ParameterSetName = "Multi")]
         [AllowEmptyString]
+        [AllowNull]
         public string[] Values;
 
         protected override void ExecuteCmdlet()

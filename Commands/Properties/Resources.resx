@@ -169,7 +169,7 @@
     <value>Remove custom action?</value>
   </data>
   <data name="RemoveEventReceiver" xml:space="preserve">
-    <value>Remove event receiver?</value>
+    <value>Remove event receiver named '{0}' with id '{1}'?</value>
   </data>
   <data name="RemoveJavaScript0" xml:space="preserve">
     <value>Remove JavaScript ('{0}')?</value>
@@ -216,10 +216,6 @@
   <data name="RemoveListItemWithId0" xml:space="preserve">
     <value>Remove list item with ID {0}?</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="pnp" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\pnp.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="RemoveTermGroup0AndAllUnderlyingTermSetsAndTerms" xml:space="preserve">
     <value>Remove Termgroup '{0}' and all underlying Termsets and Terms? </value>
   </data>
@@ -230,7 +226,7 @@
     <value>Remove Term '{0}' and all underlying Terms?</value>
   </data>
   <data name="NoAzureADAccessToken" xml:space="preserve">
-    <value>No Azure AD connection, please connect first with Connect-PnPMicrosoftGraph</value>
+    <value>No Azure AD connection, please connect first with Connect-PnPOnline -Graph, Connect-PnPOnline -Scopes or Connect-PnPOnline -AppId -AppSecret -AADDomain</value>
   </data>
   <data name="MicrosoftGraphOAuthAccessTokenExpired" xml:space="preserve">
     <value>The Azure AD OAuth 2.0 Access Token has expired. Authenticate again using the Connect-PnPMicrosoftGraph cmdlet.</value>
@@ -243,6 +239,9 @@
   </data>
   <data name="MoveFile0To1" xml:space="preserve">
     <value>Move file '{0}' to '{1}'?</value>
+  </data>
+  <data name="MoveListItemWithId0ToRecycleBin" xml:space="preserve">
+    <value>Move list item with ID {0} to Recycle Bin?</value>
   </data>
   <data name="RenameFile0To1" xml:space="preserve">
     <value>Rename file '{0}' to '{1}'?</value>
@@ -279,5 +278,35 @@
   </data>
   <data name="CreateSiteWithUrl0" xml:space="preserve">
     <value>Create site with url '{0}'?</value>
+  </data>
+  <data name="List" xml:space="preserve">
+    <value>List</value>
+  </data>
+  <data name="RemoveWebhookSubscription0From1_2" xml:space="preserve">
+    <value>Remove Webhook Subscription '{0}' from {1} '{2}' ?</value>
+  </data>
+  <data name="RemoveClientSidePage" xml:space="preserve">
+    <value>Remove Client-Side Page?</value>
+  </data>
+  <data name="RemoveUser" xml:space="preserve">
+    <value>Remove User with Id {0}, LoginName '{1}', Email '{2}' from the User Information List?</value>
+  </data>
+  <data name="RemoveDefaultClassification0" xml:space="preserve">
+    <value>The classification '{0}' you are trying remove is currently set as the default classification. Do you want to remove this classification? It will also remove this as  the default classification</value>
+  </data>
+  <data name="RemoveSiteDesign" xml:space="preserve">
+    <value>Remove site design?</value>
+  </data>
+  <data name="RemoveSiteScript" xml:space="preserve">
+    <value>Remove site script?</value>
+  </data>
+  <data name="RemoveWebPartWithTitle0" xml:space="preserve">
+    <value>Remove Web Part with title '{0}'?</value>
+  </data>
+  <data name="RemoveComponentWithInstanceId0" xml:space="preserve">
+    <value>Remove component with instance id '{0}'?</value>
+  </data>
+  <data name="RemoveNavigationNodeInLocation" xml:space="preserve">
+    <value>Remove all Navigation Nodes in {0}?</value>
   </data>
 </root>
