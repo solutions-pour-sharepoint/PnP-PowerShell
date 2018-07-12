@@ -7,6 +7,7 @@ using OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml;
 using SharePointPnP.PowerShell.CmdletHelpAttributes;
 using System;
 using System.IO;
+using System.Linq;
 using System.Management.Automation;
 using System.Net;
 using PnPFileLevel = OfficeDevPnP.Core.Framework.Provisioning.Model.FileLevel;
@@ -107,7 +108,6 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
                 }
                 catch (WebException exc)
                 {
-
                     WriteWarning($"Can't add file from url {serverRelativeUrl} : {exc}");
                 }
             }
@@ -141,13 +141,22 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
                 ((ICommitableFileConnector)template.Connector).Commit();
             }
 
-            template.Files.Add(new OfficeDevPnP.Core.Framework.Provisioning.Model.File
+            var existing = template.Files.FirstOrDefault(f =>
+              f.Src == $"{container}/{fileName}"
+              && f.Folder == folder);
+
+            if (existing != null)
+                template.Files.Remove(existing);
+
+            var newFile = new OfficeDevPnP.Core.Framework.Provisioning.Model.File
             {
                 Src = source,
                 Folder = folder,
                 Level = FileLevel,
                 Overwrite = FileOverwrite,
-            });
+            };
+
+            template.Files.Add(newFile);
 
             // Determine the output file name and path
             var outFileName = System.IO.Path.GetFileName(Path);
