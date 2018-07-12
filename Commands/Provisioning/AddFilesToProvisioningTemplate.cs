@@ -94,7 +94,7 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
 
                 var folder = SelectedWeb.GetFolderByServerRelativeUrl(serverRelativeUrl);
 
-                var files = EnumFiles(folder, true).OrderBy(f=>f.ServerRelativeUrl);
+                var files = EnumRemoteFiles(folder, true).OrderBy(f => f.ServerRelativeUrl);
                 foreach (var file in files)
                 {
                     AddSPFileToTemplate(template, file);
@@ -107,14 +107,20 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
                     SourceFolder = System.IO.Path.Combine(SessionState.Path.CurrentFileSystemLocation.Path, SourceFolder);
                 }
 
-                // Load the file and add it to the .PNP file
-                using (var fs = System.IO.File.OpenRead(SourceFolder))
-                {
-                    Folder = Folder.Replace("\\", "/");
+                var files = System.IO.Directory.GetFiles(SourceFolder, "*", SearchOption.AllDirectories).OrderBy(f => f);
 
-                    var fileName = SourceFolder.IndexOf("\\", StringComparison.Ordinal) > 0 ? SourceFolder.Substring(SourceFolder.LastIndexOf("\\") + 1) : SourceFolder;
-                    var container = !string.IsNullOrEmpty(Container) ? Container : string.Empty;
-                    AddFileToTemplate(template, fs, Folder, fileName, container);
+                foreach (var file in files)
+                {
+                    var localFileFolder = System.IO.Path.GetDirectoryName(file);
+                    var relativeFolder = Folder + localFileFolder.Substring(SourceFolder.Length);
+                    // Load the file and add it to the .PNP file
+
+                    var fileName = System.IO.Path.GetFileName(file);
+                    var container = !string.IsNullOrEmpty(Container) ? Container : relativeFolder;
+                    using (var fs = System.IO.File.OpenRead(file))
+                    {
+                        AddFileToTemplate(template, fs, relativeFolder.Replace("\\", "/"), fileName, container);
+                    }
                 }
             }
         }
@@ -142,7 +148,6 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
                 WriteWarning($"Can't add file from url {file.ServerRelativeUrl} : {exc}");
             }
         }
-
 
         /// <summary>
         /// Add a file to the template
@@ -200,11 +205,12 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
                 provider.SaveAs(template, Path, formatter, TemplateProviderExtensions);
             }
         }
-        private IEnumerable<SPFile> EnumFiles(Microsoft.SharePoint.Client.Folder folder, bool recurse)
+
+        private IEnumerable<SPFile> EnumRemoteFiles(Microsoft.SharePoint.Client.Folder folder, bool recurse)
         {
             var ctx = folder.Context;
 
-            ctx.Load(folder.Files, files=>files.Include(f=>f.ServerRelativeUrl, f=>f.Name));
+            ctx.Load(folder.Files, files => files.Include(f => f.ServerRelativeUrl, f => f.Name));
             ctx.ExecuteQueryRetry();
 
             foreach (var file in folder.Files)
@@ -219,7 +225,7 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
 
                 foreach (var subFolder in folder.Folders)
                 {
-                    foreach (var file in EnumFiles(subFolder, recurse))
+                    foreach (var file in EnumRemoteFiles(subFolder, recurse))
                     {
                         yield return file;
                     }
