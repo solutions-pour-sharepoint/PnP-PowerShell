@@ -1,18 +1,20 @@
 ﻿#if !ONPREMISES
 using Microsoft.SharePoint.Client;
 using OfficeDevPnP.Core.ALM;
+using OfficeDevPnP.Core.Enums;
 using System;
 
 namespace SharePointPnP.PowerShell.Commands.Base.PipeBinds
 {
     public sealed class AppMetadataPipeBind
     {
-        private readonly AppMetadata _appMetadata;
         private readonly Guid _id;
+        private readonly string _title;
+        private readonly AppMetadata _metadata;
 
         public AppMetadataPipeBind(AppMetadata metadata)
         {
-            _appMetadata = metadata;
+            _metadata = metadata;
         }
 
 
@@ -23,19 +25,28 @@ namespace SharePointPnP.PowerShell.Commands.Base.PipeBinds
 
         public AppMetadataPipeBind(string id)
         {
-            _id = Guid.Parse(id);
+            if (!Guid.TryParse(id, out _id))
+            {
+                _title = id;
+            }
         }
 
-        public Guid GetId()
+        public Guid Id => _id;
+
+        public string Title => _title;
+
+        public AppMetadata GetAppMetadata(ClientContext context, AppCatalogScope scope)
         {
-            if (_appMetadata != null)
+            var appmanager = new AppManager(context);
+            if (_id != Guid.Empty)
             {
-                return _appMetadata.Id;
+                return appmanager.GetAvailable(_id, scope);
             }
-            else
+            if (!string.IsNullOrEmpty(_title))
             {
-                return _id;
+                return appmanager.GetAvailable(_title, scope);
             }
+            return _metadata;
         }
     }
 

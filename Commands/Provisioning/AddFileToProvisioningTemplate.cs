@@ -14,7 +14,7 @@ using SPFile = Microsoft.SharePoint.Client.File;
 
 namespace SharePointPnP.PowerShell.Commands.Provisioning
 {
-    [Cmdlet("Add", "PnPFileToProvisioningTemplate")]
+    [Cmdlet(VerbsCommon.Add, "PnPFileToProvisioningTemplate")]
     [CmdletHelp("Adds a file to a PnP Provisioning Template",
         Category = CmdletHelpCategory.Provisioning)]
     [CmdletExample(
@@ -70,10 +70,9 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
                 Path = System.IO.Path.Combine(SessionState.Path.CurrentFileSystemLocation.Path, Path);
             }
             // Load the template
-            var template = LoadProvisioningTemplate.LoadProvisioningTemplateFromFile(
-                Path,
-                TemplateProviderExtensions
-                );
+            var template = ReadProvisioningTemplate
+                .LoadProvisioningTemplateFromFile(Path,
+                TemplateProviderExtensions);
 
             if (template == null)
             {
@@ -85,7 +84,7 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
                 var sourceUri = new Uri(SourceUrl, UriKind.RelativeOrAbsolute);
                 var serverRelativeUrl =
                     sourceUri.IsAbsoluteUri ? sourceUri.AbsolutePath :
-                    SourceUrl.StartsWith("/") ? SourceUrl :
+                    SourceUrl.StartsWith("/", StringComparison.Ordinal) ? SourceUrl :
                     SelectedWeb.ServerRelativeUrl.TrimEnd('/') + "/" + SourceUrl;
 
                 var file = SelectedWeb.GetFileByServerRelativeUrl(serverRelativeUrl);
@@ -124,7 +123,7 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
                 {
                     Folder = Folder.Replace("\\", "/");
 
-                    var fileName = Source.IndexOf("\\") > 0 ? Source.Substring(Source.LastIndexOf("\\") + 1) : Source;
+                    var fileName = Source.IndexOf("\\", StringComparison.Ordinal) > 0 ? Source.Substring(Source.LastIndexOf("\\") + 1) : Source;
                     var container = !string.IsNullOrEmpty(Container) ? Container : string.Empty;
                     AddFileToTemplate(template, fs, Folder, fileName, container);
                 }
