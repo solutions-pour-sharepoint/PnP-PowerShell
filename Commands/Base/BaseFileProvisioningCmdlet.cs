@@ -15,6 +15,9 @@ using SPFile = Microsoft.SharePoint.Client.File;
 
 namespace SharePointPnP.PowerShell.Commands
 {
+    /// <summary>
+    /// Base class for commands related to adding file to template
+    /// </summary>
     public class BaseFileProvisioningCmdlet : PnPWebCmdlet
     {
         protected const string PSNAME_LOCAL_SOURCE = "LocalSourceFile";
@@ -61,7 +64,7 @@ namespace SharePointPnP.PowerShell.Commands
         /// <param name="fs">Stream to read the file content</param>
         /// <param name="folder">target folder in the provisioning template</param>
         /// <param name="fileName">Name of the file</param>
-        /// <param name="container">Container of the file (PnP file or folder where the template is located)</param>
+        /// <param name="container">Container path within the template (pnp file) or related to the xml templage</param>
         protected void AddFileToTemplate(ProvisioningTemplate template, Stream fs, string folder, string fileName, string container)
         {
             var source = !string.IsNullOrEmpty(container) ? (container + "/" + fileName) : fileName;
@@ -109,6 +112,11 @@ namespace SharePointPnP.PowerShell.Commands
             }
         }
 
+        /// <summary>
+        /// Adds a remote file to a template
+        /// </summary>
+        /// <param name="template">Template to add the file to</param>
+        /// <param name="file">The SharePoint file to retrieve and add</param>
         protected void AddSPFileToTemplate(ProvisioningTemplate template, SPFile file)
         {
             var fileName = file.EnsureProperty(f => f.Name);
@@ -133,6 +141,12 @@ namespace SharePointPnP.PowerShell.Commands
             }
         }
 
+        /// <summary>
+        /// Adds a local file to a template
+        /// </summary>
+        /// <param name="template">Template to add the file to</param>
+        /// <param name="file">Full path to a local file</param>
+        /// <param name="folder">Destination folder of the added file</param>
         protected void AddLocalFileToTemplate(ProvisioningTemplate template, string file, string folder)
         {
             var fileName = System.IO.Path.GetFileName(file);

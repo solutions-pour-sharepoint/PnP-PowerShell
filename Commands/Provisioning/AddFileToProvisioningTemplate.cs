@@ -50,10 +50,12 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
             {
                 SelectedWeb.EnsureProperty(w => w.ServerRelativeUrl);
                 var sourceUri = new Uri(SourceUrl, UriKind.RelativeOrAbsolute);
+
+                // Get the server relative url of the file, whatever the input url is (absolute, server relative or web relative form)
                 var serverRelativeUrl =
-                    sourceUri.IsAbsoluteUri ? sourceUri.AbsolutePath :
-                    SourceUrl.StartsWith("/", StringComparison.Ordinal) ? SourceUrl :
-                    SelectedWeb.ServerRelativeUrl.TrimEnd('/') + "/" + SourceUrl;
+                    sourceUri.IsAbsoluteUri ? sourceUri.AbsolutePath : // The url is absolute, extract the absolute path (http://server/sites/web/folder/file)
+                    SourceUrl.StartsWith("/", StringComparison.Ordinal) ? SourceUrl : // The url is server relative. Take it as is (/sites/web/folder/file)
+                    SelectedWeb.ServerRelativeUrl.TrimEnd('/') + "/" + SourceUrl; // The url is web relative, prepend by the web url (folder/file)
 
                 var file = SelectedWeb.GetFileByServerRelativeUrl(serverRelativeUrl);
 
