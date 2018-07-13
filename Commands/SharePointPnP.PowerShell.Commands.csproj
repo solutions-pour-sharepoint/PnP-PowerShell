@@ -449,6 +449,7 @@
     <Compile Include="Admin\RemoveStorageEntity.cs" />
     <Compile Include="Admin\RemoveTenantTheme.cs" />
     <Compile Include="Base\AddStoredCredential.cs" />
+    <Compile Include="Base\BaseFileProvisioningCmdlet.cs" />
     <Compile Include="Base\DisablePowerShellTelemetry.cs" />
     <Compile Include="Base\GetPowerShellTelemetryEnabled.cs" />
     <Compile Include="Base\EnablePowerShellTelemetry.cs" />
@@ -923,6 +924,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\pnp.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Provisioning\Utilities\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
