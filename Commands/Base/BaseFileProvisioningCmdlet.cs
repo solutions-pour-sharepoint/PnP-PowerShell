@@ -119,8 +119,8 @@ namespace SharePointPnP.PowerShell.Commands
         /// <param name="file">The SharePoint file to retrieve and add</param>
         protected void AddSPFileToTemplate(ProvisioningTemplate template, SPFile file)
         {
-            var fileName = file.EnsureProperty(f => f.Name);
-            var folderRelativeUrl = file.ServerRelativeUrl.Substring(0, file.ServerRelativeUrl.Length - fileName.Length - 1);
+            file.EnsureProperties(f => f.Name, f => f.ServerRelativeUrl);
+            var folderRelativeUrl = file.ServerRelativeUrl.Substring(0, file.ServerRelativeUrl.Length - file.Name.Length - 1);
             var folderWebRelativeUrl = HttpUtility.UrlKeyValueDecode(folderRelativeUrl.Substring(SelectedWeb.ServerRelativeUrl.TrimEnd('/').Length + 1));
             if (ClientContext.HasPendingRequest) ClientContext.ExecuteQuery();
             try
@@ -132,7 +132,7 @@ namespace SharePointPnP.PowerShell.Commands
                     // and the stream provided by OpenBinaryDirect does not allow it
                     fi.Stream.CopyTo(ms);
                     ms.Position = 0;
-                    AddFileToTemplate(template, ms, folderWebRelativeUrl, fileName, folderWebRelativeUrl);
+                    AddFileToTemplate(template, ms, folderWebRelativeUrl, file.Name, folderWebRelativeUrl);
                 }
             }
             catch (WebException exc)
