@@ -26,13 +26,17 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
        Remarks = "Adds files to a PnP Provisioning Template, specifies the level as Published and defines to not overwrite the files if it exists in the site.",
        SortOrder = 3)]
     [CmdletExample(
-       Code = @"PS:> Add-PnPFileToProvisioningTemplate -Path template.pnp -SourceFolder $sourceFolder -Folder $targetFolder -Container $container",
-       Remarks = "Adds files to a PnP Provisioning Template with a custom container for the file",
+       Code = @"PS:> Add-PnPFileToProvisioningTemplate -Path template.pnp -SourceFolder ""./myfolder"" -Recurse",
+       Remarks = "Adds files to a PnP Provisioning Template from a local folder recursively.",
        SortOrder = 4)]
+    [CmdletExample(
+       Code = @"PS:> Add-PnPFileToProvisioningTemplate -Path template.pnp -SourceFolder $sourceFolder -Folder $targetFolder -Container $container",
+       Remarks = "Adds files to a PnP Provisioning Template with a custom container for the files",
+       SortOrder = 5)]
     [CmdletExample(
         Code = @"PS:> Add-PnPFileToProvisioningTemplate -Path template.pnp -SourceFolderUrl $urlOfFolder",
         Remarks = "Adds files to a PnP Provisioning Template retrieved from the currently connected web. The url can be either full, server relative or Web relative url.",
-        SortOrder = 4)]
+        SortOrder = 6)]
     public class AddFilesToProvisioningTemplate : BaseFileProvisioningCmdlet
     {
         [Parameter(Mandatory = true, Position = 1, ParameterSetName = PSNAME_LOCAL_SOURCE, HelpMessage = "The source folder to add to the in-memory template, optionally including full path.")]
@@ -43,6 +47,9 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
 
         [Parameter(Mandatory = true, Position = 2, ParameterSetName = PSNAME_LOCAL_SOURCE, HelpMessage = "The target Folder for the source folder to add to the in-memory template.")]
         public string Folder;
+
+        [Parameter(Mandatory = true, Position = 7, ParameterSetName = PSNAME_LOCAL_SOURCE, HelpMessage = "The target Folder for the source folder to add to the in-memory template.")]
+        public SwitchParameter Recurse = false;
 
         protected override void ProcessRecord()
         {
@@ -58,7 +65,7 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
 
                 var folder = SelectedWeb.GetFolderByServerRelativeUrl(serverRelativeUrl);
 
-                var files = EnumRemoteFiles(folder, true).OrderBy(f => f.ServerRelativeUrl);
+                var files = EnumRemoteFiles(folder, Recurse).OrderBy(f => f.ServerRelativeUrl);
                 foreach (var file in files)
                 {
                     AddSPFileToTemplate(template, file);
@@ -71,7 +78,7 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
                     SourceFolder = System.IO.Path.Combine(SessionState.Path.CurrentFileSystemLocation.Path, SourceFolder);
                 }
 
-                var files = System.IO.Directory.GetFiles(SourceFolder, "*", SearchOption.AllDirectories).OrderBy(f => f);
+                var files = System.IO.Directory.GetFiles(SourceFolder, "*", Recurse ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly).OrderBy(f => f);
 
                 foreach (var file in files)
                 {
