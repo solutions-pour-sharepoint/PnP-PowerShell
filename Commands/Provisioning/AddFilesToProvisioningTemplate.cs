@@ -52,7 +52,7 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
         [Parameter(Mandatory = true, Position = 2, ParameterSetName = PSNAME_LOCAL_SOURCE, HelpMessage = "The target Folder for the source folder to add to the in-memory template.")]
         public string Folder;
 
-        [Parameter(Mandatory = true, Position = 8, ParameterSetName = PSNAME_LOCAL_SOURCE, HelpMessage = "The target Folder for the source folder to add to the in-memory template.")]
+        [Parameter(Mandatory = true, Position = 8, HelpMessage = "The target Folder for the source folder to add to the in-memory template.")]
         public SwitchParameter Recurse = false;
 
         protected override void ProcessRecord()

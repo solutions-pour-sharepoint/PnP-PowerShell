@@ -208,10 +208,6 @@ namespace SharePointPnP.PowerShell.Commands
                     };
                 }
             }
-            else
-            {
-                WriteWarning($"File {file.ServerRelativeUrl} is not a webpart page");
-            }
         }
 
         /// <summary>
