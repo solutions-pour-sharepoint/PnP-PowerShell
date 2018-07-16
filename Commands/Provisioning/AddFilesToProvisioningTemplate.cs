@@ -37,7 +37,11 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
         Code = @"PS:> Add-PnPFileToProvisioningTemplate -Path template.pnp -SourceFolderUrl $urlOfFolder",
         Remarks = "Adds files to a PnP Provisioning Template retrieved from the currently connected web. The url can be either full, server relative or Web relative url.",
         SortOrder = 6)]
-    public class AddFilesToProvisioningTemplate : BaseFileProvisioningCmdlet
+     [CmdletExample(
+        Code = @"PS:> Add-PnPFileToProvisioningTemplate -Path template.pnp -SourceFolderUrl $urlOfFolder -ExtractWebParts:$false",
+        Remarks = "Adds files to a PnP Provisioning Template retrieved from the currently connected web, disabling WebPart extraction.",
+        SortOrder = 7)]
+   public class AddFilesToProvisioningTemplate : BaseFileProvisioningCmdlet
     {
         [Parameter(Mandatory = true, Position = 1, ParameterSetName = PSNAME_LOCAL_SOURCE, HelpMessage = "The source folder to add to the in-memory template, optionally including full path.")]
         public string SourceFolder;
@@ -48,7 +52,7 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
         [Parameter(Mandatory = true, Position = 2, ParameterSetName = PSNAME_LOCAL_SOURCE, HelpMessage = "The target Folder for the source folder to add to the in-memory template.")]
         public string Folder;
 
-        [Parameter(Mandatory = true, Position = 7, ParameterSetName = PSNAME_LOCAL_SOURCE, HelpMessage = "The target Folder for the source folder to add to the in-memory template.")]
+        [Parameter(Mandatory = true, Position = 8, ParameterSetName = PSNAME_LOCAL_SOURCE, HelpMessage = "The target Folder for the source folder to add to the in-memory template.")]
         public SwitchParameter Recurse = false;
 
         protected override void ProcessRecord()
@@ -95,6 +99,8 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
 
         private IEnumerable<SPFile> EnumRemoteFiles(Microsoft.SharePoint.Client.Folder folder, bool recurse)
         {
+            if (folder == null) throw new ArgumentNullException(nameof(folder));
+
             var ctx = folder.Context;
 
             ctx.Load(folder.Files, files => files.Include(f => f.ServerRelativeUrl, f => f.Name));

@@ -27,7 +27,11 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
     [CmdletExample(
         Code = @"PS:> Add-PnPFileToProvisioningTemplate -Path template.pnp -SourceUrl $urlOfFile",
         Remarks = "Adds a file to a PnP Provisioning Template retrieved from the currently connected web. The url can be either full, server relative or Web relative url.",
-        SortOrder = 4)]
+        SortOrder = 5)]
+    [CmdletExample(
+        Code = @"PS:> Add-PnPFileToProvisioningTemplate -Path template.pnp -SourceUrl $urlOfFile -ExtractWebParts:$false",
+        Remarks = "Adds a file to a PnP Provisioning Template retrieved from the currently connected web, disabling WebPart extraction.",
+        SortOrder = 6)]
     public class AddFileToProvisioningTemplate : BaseFileProvisioningCmdlet
     {
         /*
