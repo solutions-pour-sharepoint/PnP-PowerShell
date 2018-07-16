@@ -45,10 +45,10 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
 
         protected override void ProcessRecord()
         {
+            base.ProcessRecord();
             var template = LoadTemplate();
             if (this.ParameterSetName == PSNAME_REMOTE_SOURCE)
             {
-                SelectedWeb.EnsureProperty(w => w.ServerRelativeUrl);
                 var sourceUri = new Uri(SourceUrl, UriKind.RelativeOrAbsolute);
 
                 // Get the server relative url of the file, whatever the input url is (absolute, server relative or web relative form)
