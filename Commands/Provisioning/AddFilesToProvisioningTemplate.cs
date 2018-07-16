@@ -48,7 +48,7 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
         [Parameter(Mandatory = true, Position = 2, ParameterSetName = PSNAME_LOCAL_SOURCE, HelpMessage = "The target Folder for the source folder to add to the in-memory template.")]
         public string Folder;
 
-        [Parameter(Mandatory = true, Position = 7, ParameterSetName = PSNAME_LOCAL_SOURCE, HelpMessage = "The target Folder for the source folder to add to the in-memory template.")]
+        [Parameter(Mandatory = true, Position = 8, ParameterSetName = PSNAME_LOCAL_SOURCE, HelpMessage = "The target Folder for the source folder to add to the in-memory template.")]
         public SwitchParameter Recurse = false;
 
         protected override void ProcessRecord()
@@ -95,6 +95,8 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
 
         private IEnumerable<SPFile> EnumRemoteFiles(Microsoft.SharePoint.Client.Folder folder, bool recurse)
         {
+            if (folder == null) throw new ArgumentNullException(nameof(folder));
+
             var ctx = folder.Context;
 
             ctx.Load(folder.Files, files => files.Include(f => f.ServerRelativeUrl, f => f.Name));

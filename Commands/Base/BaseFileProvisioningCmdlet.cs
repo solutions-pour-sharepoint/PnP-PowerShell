@@ -38,20 +38,20 @@ namespace SharePointPnP.PowerShell.Commands
         [Parameter(Mandatory = false, Position = 5, HelpMessage = "Set to overwrite in site, Defaults to true")]
         public SwitchParameter FileOverwrite = true;
 
-        [Parameter(Mandatory = false, Position = 6, HelpMessage = "Allows you to specify ITemplateProviderExtension to execute while loading the template.")]
-        public ITemplateProviderExtension[] TemplateProviderExtensions;
-
-        [Parameter(Mandatory = false, Position = 7, HelpMessage = "Include webparts when the file is a page")]
+        [Parameter(Mandatory = false, Position = 6, ParameterSetName = PSNAME_REMOTE_SOURCE, HelpMessage = "Include webparts when the file is a page")]
         public SwitchParameter ExtractWebParts = true;
+
+        [Parameter(Mandatory = false, Position = 7, HelpMessage = "Allows you to specify ITemplateProviderExtension to execute while loading the template.")]
+        public ITemplateProviderExtension[] TemplateProviderExtensions;
 
         protected override void ProcessRecord()
         {
             base.ProcessRecord();
             var ctx = (ClientContext)SelectedWeb.Context;
-            ctx.Load(SelectedWeb, web=>web.Id, web => web.ServerRelativeUrl, web => web.Url);
+            ctx.Load(SelectedWeb, web => web.Id, web => web.ServerRelativeUrl, web => web.Url);
             if (ExtractWebParts)
             {
-                ctx.Load(ctx.Site, site=>site.Id, site => site.ServerRelativeUrl, site => site.Url);
+                ctx.Load(ctx.Site, site => site.Id, site => site.ServerRelativeUrl, site => site.Url);
                 ctx.Load(SelectedWeb.Lists, lists => lists.Include(l => l.Title, l => l.RootFolder.ServerRelativeUrl, l => l.Id));
             }
             ctx.ExecuteQueryRetry();
@@ -94,6 +94,11 @@ namespace SharePointPnP.PowerShell.Commands
             IEnumerable<WebPart> webParts = null
             )
         {
+            if (template == null) throw new ArgumentNullException(nameof(template));
+            if (fs == null) throw new ArgumentNullException(nameof(fs));
+            if (fileName == null) throw new ArgumentNullException(nameof(fileName));
+
+
             var source = !string.IsNullOrEmpty(container) ? (container + "/" + fileName) : fileName;
 
             template.Connector.SaveFileStream(fileName, container, fs);
@@ -217,6 +222,10 @@ namespace SharePointPnP.PowerShell.Commands
         /// <param name="folder">Destination folder of the added file</param>
         protected void AddLocalFileToTemplate(ProvisioningTemplate template, string file, string folder)
         {
+            if (template == null) throw new ArgumentNullException(nameof(template));
+            if (file == null) throw new ArgumentNullException(nameof(file));
+            if (folder == null) throw new ArgumentNullException(nameof(folder));
+
             var fileName = System.IO.Path.GetFileName(file);
             var container = !string.IsNullOrEmpty(Container) ? Container : folder.Replace("\\", "/");
             using (var fs = System.IO.File.OpenRead(file))
