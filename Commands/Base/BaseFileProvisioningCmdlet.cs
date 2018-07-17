@@ -4,6 +4,7 @@ using OfficeDevPnP.Core.Framework.Provisioning.Connectors;
 using OfficeDevPnP.Core.Framework.Provisioning.Model;
 using OfficeDevPnP.Core.Framework.Provisioning.Providers;
 using OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml;
+using SharePointPnP.PowerShell.Commands.Extensions;
 using SharePointPnP.PowerShell.Commands.Provisioning;
 using SharePointPnP.PowerShell.Commands.Utilities;
 using System;
@@ -11,6 +12,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Management.Automation;
+using System.Text;
 using System.Text.RegularExpressions;
 using PnPFileLevel = OfficeDevPnP.Core.Framework.Provisioning.Model.FileLevel;
 using SPFile = Microsoft.SharePoint.Client.File;
@@ -40,7 +42,10 @@ namespace SharePointPnP.PowerShell.Commands
         [Parameter(Mandatory = false, Position = 6, ParameterSetName = PSNAME_REMOTE_SOURCE, HelpMessage = "Include webparts when the file is a page")]
         public SwitchParameter ExtractWebParts = true;
 
-        [Parameter(Mandatory = false, Position = 7, HelpMessage = "Allows you to specify ITemplateProviderExtension to execute while loading the template.")]
+        [Parameter(Mandatory = false, Position = 7, ParameterSetName = PSNAME_REMOTE_SOURCE, HelpMessage = "Include webparts when the file is a page")]
+        public SwitchParameter ExtractFileProperties = true;
+
+        [Parameter(Mandatory = false, Position = 8, HelpMessage = "Allows you to specify ITemplateProviderExtension to execute while loading the template.")]
         public ITemplateProviderExtension[] TemplateProviderExtensions;
 
         protected readonly ProgressRecord _progressEnumeration = new ProgressRecord(0, "Activity", "Status") { Activity = "Enumerating folder" };
@@ -88,13 +93,15 @@ namespace SharePointPnP.PowerShell.Commands
         /// <param name="fileName">Name of the file</param>
         /// <param name="container">Container path within the template (pnp file) or related to the xml templage</param>
         /// <param name="webParts">WebParts to include</param>
+        /// <param name="properties">Properties of the file</param>
         protected void AddFileToTemplate(
             ProvisioningTemplate template,
             Stream fs,
             string folder,
             string fileName,
             string container,
-            IEnumerable<WebPart> webParts = null
+            IEnumerable<WebPart> webParts = null,
+            IDictionary<string, string> properties = null
             )
         {
             if (template == null) throw new ArgumentNullException(nameof(template));
@@ -124,7 +131,12 @@ namespace SharePointPnP.PowerShell.Commands
             };
 
             if (webParts != null) newFile.WebParts.AddRange(webParts);
-
+            if (properties != null) {
+                foreach (var property in properties)
+                {
+                    newFile.Properties.Add(property.Key,property.Value);
+                }
+            }
             template.Files.Add(newFile);
 
             // Determine the output file name and path
@@ -175,6 +187,7 @@ namespace SharePointPnP.PowerShell.Commands
                     WriteProgress(_progressFileProcessing);
                 }
 
+
                 using (var fi = SPFile.OpenBinaryDirect(ClientContext, file.ServerRelativeUrl))
                 using (var ms = new MemoryStream())
                 {
@@ -185,7 +198,16 @@ namespace SharePointPnP.PowerShell.Commands
                     // and the stream provided by OpenBinaryDirect does not allow it
                     fi.Stream.CopyTo(ms);
                     ms.Position = 0;
-                    AddFileToTemplate(template, ms, folderWebRelativeUrl, file.Name, folderWebRelativeUrl, webParts);
+                    IDictionary<string, string> properties = null;
+                    if (ExtractFileProperties && string.Compare(System.IO.Path.GetExtension(file.Name), ".aspx", true) == 0)
+                    {
+                        _progressFileProcessing.PercentComplete = 35;
+                        _progressFileProcessing.StatusDescription = $"Extracting properties from {file.ServerRelativeUrl}";
+                        properties = XmlPageDataHelper.ExtractProperties(
+                            Encoding.UTF8.GetString(ms.ToArray())
+                            ).ToDictionary(p=>p.Key, p=>Tokenize(p.Value));
+                    }
+                   AddFileToTemplate(template, ms, folderWebRelativeUrl, file.Name, folderWebRelativeUrl, webParts, properties);
                     _progressFileProcessing.PercentComplete = 100;
                     _progressFileProcessing.StatusDescription = $"Adding file {file.ServerRelativeUrl} to template";
                     _progressFileProcessing.RecordType = ProgressRecordType.Completed;
