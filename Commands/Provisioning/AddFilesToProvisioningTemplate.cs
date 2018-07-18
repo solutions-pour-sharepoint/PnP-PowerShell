@@ -96,7 +96,7 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
 
                 for (int i = 0; i < files.Length; i++)
                 {
-                    var file = files[0];
+                    var file = files[i];
 
                     _progressFilesEnumeration.PercentComplete = 100 * i / files.Length;
 
