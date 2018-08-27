@@ -270,7 +270,7 @@ PS:> Connect-PnPOnline -Url https://yourserver -ClientId <id> -HighTrustCertific
 #endif
         public string AppSecret;
 
-        [Parameter(Mandatory = true, ParameterSetName = ParameterSet_WEBLOGIN, HelpMessage = "If you want to connect to SharePoint with browser based login")]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet_WEBLOGIN, HelpMessage = "If you want to connect to SharePoint with browser based login. This is required when you have multi-factor authentication (MFA) enabled.")]
         public SwitchParameter UseWebLogin;
 
         [Parameter(Mandatory = false, ParameterSetName = ParameterSet_MAIN, HelpMessage = "Specify to use for instance use forms based authentication (FBA)")]
@@ -552,11 +552,7 @@ Use -PnPO365ManagementShell instead");
             }
             else if (ParameterSetName == ParameterSet_ACCESSTOKEN)
             {
-#if !NETSTANDARD2_0
-                var jwtToken = new System.IdentityModel.Tokens.JwtSecurityToken(AccessToken);
-#else
                 var jwtToken = new System.IdentityModel.Tokens.Jwt.JwtSecurityToken(AccessToken);
-#endif
                 var aud = jwtToken.Audiences.FirstOrDefault();
                 if (aud != null)
                 {

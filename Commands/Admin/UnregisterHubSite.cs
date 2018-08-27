@@ -1,12 +1,12 @@
 ﻿#if !ONPREMISES
+using System;
+using System.Linq;
 using Microsoft.Online.SharePoint.TenantAdministration;
 using Microsoft.SharePoint.Client;
 using SharePointPnP.PowerShell.CmdletHelpAttributes;
 using SharePointPnP.PowerShell.Commands.Base;
 using System.Management.Automation;
-using OfficeDevPnP.Core.Sites;
 using SharePointPnP.PowerShell.Commands.Base.PipeBinds;
-using System;
 
 namespace SharePointPnP.PowerShell.Commands.Admin
 {
@@ -25,7 +25,19 @@ namespace SharePointPnP.PowerShell.Commands.Admin
 
         protected override void ExecuteCmdlet()
         {
-            Tenant.UnregisterHubSite(Site.Url);
+            var hubSitesProperties = Tenant.GetHubSitesProperties();
+            ClientContext.Load(hubSitesProperties);
+            ClientContext.ExecuteQueryRetry();
+            HubSiteProperties props = null;
+            if (Site.Id != Guid.Empty)
+            {
+                props = hubSitesProperties.Single(h => h.SiteId == Site.Id);
+            }
+            else
+            {
+                props = hubSitesProperties.Single(h => h.SiteUrl.Equals(Site.Url, StringComparison.OrdinalIgnoreCase));
+            }
+            Tenant.UnregisterHubSiteById(props.ID);
             ClientContext.ExecuteQueryRetry();
         }
     }

@@ -5,18 +5,54 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [2.27.1806.0] Unreleased
+## [3.0.1808.0]
 ### Added
-
-- Added -CollapseSpecification option to Submit-PnPSearchQuery
-- Added -InSiteHierarchy to Get-PnPField to search for fields in the site collection
+- Added Get-PnPLabel and Set-PnPLabel to get and set compliancy tags/labels on a list or library. Only available for SharePoint Online.
 
 ### Changed
-- Fix for issue where using Add-PnPFile and setting Created and Modified did not update values
+- Fixed Get-PnPSearchCrawlLog where listing user profile crawl entries failed for some tenants
+- Added default pipebind to Get-PnPListitem 
+- Add-PnPDocumentSet now adds the content type to the document library.
+- Updated documentation for Clear-PnPRecycleBinItem and Restore-PnPRecycleBinItem
+- Updated documentation for New-PnPSite
+
+### Contributors
+- KoenZomers
+- robinmeure
+
+## [2.28.1807.0]
+### Changed
+- Added IncludeClassification to Get-PnPUnifiedGroup
+- Updated documentation for Get-PnPSearchCrawlLog
+- Added -NewFileName to Add-PnPFile cmdlet
+
+### Contributors
+- vipulkelkar
+- wobba
+- koenzomers
+
+## [2.27.1806.0]
+### Added
+- Added Grant-PnPTenantServicePrincipalPermission to explicitely grant a permission on a resource for the tenant.
+
+### Changed
+- Fixed edge cases where progress sent to PowerShell would be null, causing the provisioning of a template to end prematurely.
+- Fixed Unregister-PnPHubSite where you could not unregister a hub site if the site was deleted before unregistering
 
 ### Deprecated
 
 ### Contributors
+
+## [2.26.1805.1]
+### Added
+
+- Added -Timeout option to Add-PnPApp
+- Added -CollapseSpecification option to Submit-PnPSearchQuery
+- Added -InSiteHierarchy to Get-PnPField to search for fields in the site collection
+- Added Get-PnPSearchCrawlLog
+
+### Changed
+- Fix for issue where using Add-PnPFile and setting Created and Modified did not update values
 
 ## [2.26.1805.0]
 ### Added
