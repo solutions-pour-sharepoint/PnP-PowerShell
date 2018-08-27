@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Management.Automation;
+using System.Net;
 using System.Text.RegularExpressions;
 using PnPFileLevel = OfficeDevPnP.Core.Framework.Provisioning.Model.FileLevel;
 using SPFile = Microsoft.SharePoint.Client.File;
@@ -42,10 +43,6 @@ namespace SharePointPnP.PowerShell.Commands
 
         [Parameter(Mandatory = false, Position = 7, HelpMessage = "Allows you to specify ITemplateProviderExtension to execute while loading the template.")]
         public ITemplateProviderExtension[] TemplateProviderExtensions;
-
-        protected readonly ProgressRecord _progressEnumeration = new ProgressRecord(0, "Activity", "Status") { Activity = "Enumerating folder" };
-        protected readonly ProgressRecord _progressFilesEnumeration = new ProgressRecord(1, "Activity", "Status") { Activity = "Extracting files" };
-        protected readonly ProgressRecord _progressFileProcessing = new ProgressRecord(2, "Activity", "Status") { Activity = "Extracting file" };
 
         protected override void ProcessRecord()
         {
@@ -100,6 +97,7 @@ namespace SharePointPnP.PowerShell.Commands
             if (template == null) throw new ArgumentNullException(nameof(template));
             if (fs == null) throw new ArgumentNullException(nameof(fs));
             if (fileName == null) throw new ArgumentNullException(nameof(fileName));
+
 
             var source = !string.IsNullOrEmpty(container) ? (container + "/" + fileName) : fileName;
 
@@ -159,8 +157,6 @@ namespace SharePointPnP.PowerShell.Commands
             if (file == null) throw new ArgumentNullException(nameof(file));
 
             file.EnsureProperties(f => f.Name, f => f.ServerRelativeUrl);
-
-            _progressFileProcessing.StatusDescription = $"Extracting file {file.ServerRelativeUrl}";
             var folderRelativeUrl = file.ServerRelativeUrl.Substring(0, file.ServerRelativeUrl.Length - file.Name.Length - 1);
             var folderWebRelativeUrl = HttpUtility.UrlKeyValueDecode(folderRelativeUrl.Substring(SelectedWeb.ServerRelativeUrl.TrimEnd('/').Length + 1));
             if (ClientContext.HasPendingRequest) ClientContext.ExecuteQuery();
@@ -170,31 +166,21 @@ namespace SharePointPnP.PowerShell.Commands
                 if (ExtractWebParts)
                 {
                     webParts = ExtractSPFileWebParts(file).ToArray();
-                    _progressFileProcessing.PercentComplete = 25;
-                    _progressFileProcessing.StatusDescription = $"Extracting webpart from {file.ServerRelativeUrl} ";
-                    WriteProgress(_progressFileProcessing);
                 }
 
                 using (var fi = SPFile.OpenBinaryDirect(ClientContext, file.ServerRelativeUrl))
                 using (var ms = new MemoryStream())
                 {
-                    _progressFileProcessing.PercentComplete = 50;
-                    _progressFileProcessing.StatusDescription = $"Reading file {file.ServerRelativeUrl}";
-                    WriteProgress(_progressFileProcessing);
                     // We are using a temporary memory stream because the file connector is seeking in the stream
                     // and the stream provided by OpenBinaryDirect does not allow it
                     fi.Stream.CopyTo(ms);
                     ms.Position = 0;
                     AddFileToTemplate(template, ms, folderWebRelativeUrl, file.Name, folderWebRelativeUrl, webParts);
-                    _progressFileProcessing.PercentComplete = 100;
-                    _progressFileProcessing.StatusDescription = $"Adding file {file.ServerRelativeUrl} to template";
-                    _progressFileProcessing.RecordType = ProgressRecordType.Completed;
-                    WriteProgress(_progressFileProcessing);
                 }
             }
-            catch (Exception exc)
+            catch (WebException exc)
             {
-                WriteWarning($"Error trying to add file {file.ServerRelativeUrl} : {exc.Message}");
+                WriteWarning($"Can't add file from url {file.ServerRelativeUrl} : {exc}");
             }
         }
 
@@ -236,27 +222,12 @@ namespace SharePointPnP.PowerShell.Commands
             if (file == null) throw new ArgumentNullException(nameof(file));
             if (folder == null) throw new ArgumentNullException(nameof(folder));
 
-            _progressFileProcessing.Activity = $"Extracting file {file}";
-            _progressFileProcessing.StatusDescription = "Adding file {file}";
-            _progressFileProcessing.PercentComplete = 0;
-            WriteProgress(_progressFileProcessing);
-
-            try
+            var fileName = System.IO.Path.GetFileName(file);
+            var container = !string.IsNullOrEmpty(Container) ? Container : folder.Replace("\\", "/");
+            using (var fs = System.IO.File.OpenRead(file))
             {
-                var fileName = System.IO.Path.GetFileName(file);
-                var container = !string.IsNullOrEmpty(Container) ? Container : folder.Replace("\\", "/");
-
-                using (var fs = System.IO.File.OpenRead(file))
-                {
-                    AddFileToTemplate(template, fs, folder.Replace("\\", "/"), fileName, container);
-                }
+                AddFileToTemplate(template, fs, folder.Replace("\\", "/"), fileName, container);
             }
-            catch (Exception exc)
-            {
-                WriteWarning($"Error trying to add file {file} : {exc.Message}");
-            }
-            _progressFileProcessing.RecordType = ProgressRecordType.Completed;
-            WriteProgress(_progressFileProcessing);
         }
 
         private string Tokenize(string input)
@@ -267,7 +238,8 @@ namespace SharePointPnP.PowerShell.Commands
             {
                 input = input
                     .ReplaceCaseInsensitive(list.Id.ToString("D"), "{listid:" + Regex.Escape(list.Title) + "}")
-                    .ReplaceCaseInsensitive(list.GetWebRelativeUrl(), "{listurl:" + Regex.Escape(list.Title) + "}");
+                    .ReplaceCaseInsensitive(SelectedWeb.Url.TrimEnd('/') + "/" + list.GetWebRelativeUrl(), "{listurl:" + Regex.Escape(list.Title) + "}")
+                    .ReplaceCaseInsensitive(list.RootFolder.ServerRelativeUrl, "{listurl:" + Regex.Escape(list.Title) + "}");
             }
             return input.ReplaceCaseInsensitive(SelectedWeb.Url, "{site}")
                 .ReplaceCaseInsensitive(SelectedWeb.ServerRelativeUrl, "{site}")
