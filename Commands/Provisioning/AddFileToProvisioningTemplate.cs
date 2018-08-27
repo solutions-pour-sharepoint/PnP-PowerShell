@@ -27,7 +27,11 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
     [CmdletExample(
         Code = @"PS:> Add-PnPFileToProvisioningTemplate -Path template.pnp -SourceUrl $urlOfFile",
         Remarks = "Adds a file to a PnP Provisioning Template retrieved from the currently connected web. The url can be either full, server relative or Web relative url.",
-        SortOrder = 4)]
+        SortOrder = 5)]
+    [CmdletExample(
+        Code = @"PS:> Add-PnPFileToProvisioningTemplate -Path template.pnp -SourceUrl $urlOfFile -ExtractWebParts:$false",
+        Remarks = "Adds a file to a PnP Provisioning Template retrieved from the currently connected web, disabling WebPart extraction.",
+        SortOrder = 6)]
     public class AddFileToProvisioningTemplate : BaseFileProvisioningCmdlet
     {
         /*
@@ -45,10 +49,10 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
 
         protected override void ProcessRecord()
         {
+            base.ProcessRecord();
             var template = LoadTemplate();
             if (this.ParameterSetName == PSNAME_REMOTE_SOURCE)
             {
-                SelectedWeb.EnsureProperty(w => w.ServerRelativeUrl);
                 var sourceUri = new Uri(SourceUrl, UriKind.RelativeOrAbsolute);
 
                 // Get the server relative url of the file, whatever the input url is (absolute, server relative or web relative form)
@@ -56,6 +60,10 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
                     sourceUri.IsAbsoluteUri ? sourceUri.AbsolutePath : // The url is absolute, extract the absolute path (http://server/sites/web/folder/file)
                     SourceUrl.StartsWith("/", StringComparison.Ordinal) ? SourceUrl : // The url is server relative. Take it as is (/sites/web/folder/file)
                     SelectedWeb.ServerRelativeUrl.TrimEnd('/') + "/" + SourceUrl; // The url is web relative, prepend by the web url (folder/file)
+
+                _progressFileProcessing.PercentComplete = 0;
+                _progressFileProcessing.RecordType = ProgressRecordType.Processing;
+                _progressFileProcessing.StatusDescription = $"Getting file info {serverRelativeUrl}";
 
                 var file = SelectedWeb.GetFileByServerRelativeUrl(serverRelativeUrl);
 
@@ -70,6 +78,11 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
 
                 // Load the file and add it to the .PNP file
                 Folder = Folder.Replace("\\", "/");
+
+                _progressFileProcessing.PercentComplete = 0;
+                _progressFileProcessing.RecordType = ProgressRecordType.Processing;
+                _progressFileProcessing.StatusDescription = $"Getting file info {Source}";
+                WriteProgress(_progressFileProcessing);
 
                 AddLocalFileToTemplate(template, Source, Folder);
             }
