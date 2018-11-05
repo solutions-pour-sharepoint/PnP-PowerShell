@@ -7,40 +7,40 @@ using System.Linq;
 using System.Management.Automation;
 using SPFile = Microsoft.SharePoint.Client.File;
 
-namespace SharePointPnP.PowerShell.Commands.Provisioning
+namespace SharePointPnP.PowerShell.Commands.Provisioning.Site
 {
-    [Cmdlet(VerbsCommon.Add, "PnPFilesToProvisioningTemplate")]
+    [Cmdlet(VerbsCommon.Add, "PnPFilesToSiteTemplate")]
     [CmdletHelp("Adds files to a PnP Provisioning Template",
         Category = CmdletHelpCategory.Provisioning)]
     [CmdletExample(
-       Code = @"PS:> Add-PnPFilesToProvisioningTemplate -Path template.pnp -SourceFolder $sourceFolder -Folder $targetFolder",
+       Code = @"PS:> Add-PnPFilesToSiteTemplate -Path template.pnp -SourceFolder $sourceFolder -Folder $targetFolder",
        Remarks = "Adds files to a PnP Provisioning Template from a local folder",
        SortOrder = 1)]
     [CmdletExample(
-       Code = @"PS:> Add-PnPFileToProvisioningTemplate -Path template.xml -SourceFolder $sourceFolder -Folder $targetFolder",
+       Code = @"PS:> Add-PnPFileToSiteTemplate -Path template.xml -SourceFolder $sourceFolder -Folder $targetFolder",
        Remarks = "Adds files reference to a PnP Provisioning XML Template",
        SortOrder = 2)]
     [CmdletExample(
-       Code = @"PS:> Add-PnPFileToProvisioningTemplate -Path template.pnp -SourceFolder ""./myfolder"" -Folder ""folderinsite"" -FileLevel Published -FileOverwrite:$false",
+       Code = @"PS:> Add-PnPFileToSiteTemplate -Path template.pnp -SourceFolder ""./myfolder"" -Folder ""folderinsite"" -FileLevel Published -FileOverwrite:$false",
        Remarks = "Adds files to a PnP Provisioning Template, specifies the level as Published and defines to not overwrite the files if it exists in the site.",
        SortOrder = 3)]
     [CmdletExample(
-       Code = @"PS:> Add-PnPFileToProvisioningTemplate -Path template.pnp -SourceFolder ""./myfolder"" -Recurse",
+       Code = @"PS:> Add-PnPFileToSiteTemplate -Path template.pnp -SourceFolder ""./myfolder"" -Recurse",
        Remarks = "Adds files to a PnP Provisioning Template from a local folder recursively.",
        SortOrder = 4)]
     [CmdletExample(
-       Code = @"PS:> Add-PnPFileToProvisioningTemplate -Path template.pnp -SourceFolder $sourceFolder -Folder $targetFolder -Container $container",
+       Code = @"PS:> Add-PnPFileToSiteTemplate -Path template.pnp -SourceFolder $sourceFolder -Folder $targetFolder -Container $container",
        Remarks = "Adds files to a PnP Provisioning Template with a custom container for the files",
        SortOrder = 5)]
     [CmdletExample(
-        Code = @"PS:> Add-PnPFileToProvisioningTemplate -Path template.pnp -SourceFolderUrl $urlOfFolder",
+        Code = @"PS:> Add-PnPFileToSiteTemplate -Path template.pnp -SourceFolderUrl $urlOfFolder",
         Remarks = "Adds files to a PnP Provisioning Template retrieved from the currently connected web. The url can be either full, server relative or Web relative url.",
         SortOrder = 6)]
     [CmdletExample(
-        Code = @"PS:> Add-PnPFileToProvisioningTemplate -Path template.pnp -SourceFolderUrl $urlOfFolder -ExtractWebParts:$false",
+        Code = @"PS:> Add-PnPFileToSiteTemplate -Path template.pnp -SourceFolderUrl $urlOfFolder -ExtractWebParts:$false",
         Remarks = "Adds files to a PnP Provisioning Template retrieved from the currently connected web, disabling WebPart extraction.",
         SortOrder = 7)]
-    public class AddFilesToProvisioningTemplate : BaseFileProvisioningCmdlet
+    public class AddFilesToSiteTemplate : BaseFileProvisioningCmdlet
     {
         [Parameter(Mandatory = true, Position = 1, ParameterSetName = PSNAME_LOCAL_SOURCE, HelpMessage = "The source folder to add to the in-memory template, optionally including full path.")]
         public string SourceFolder;
