@@ -3,26 +3,26 @@ using SharePointPnP.PowerShell.CmdletHelpAttributes;
 using System;
 using System.Management.Automation;
 
-namespace SharePointPnP.PowerShell.Commands.Provisioning
+namespace SharePointPnP.PowerShell.Commands.Provisioning.Site
 {
     [Cmdlet(VerbsCommon.Add, "PnPFileToProvisioningTemplate")]
     [CmdletHelp("Adds a file to a PnP Provisioning Template",
         Category = CmdletHelpCategory.Provisioning)]
     [CmdletExample(
        Code = @"PS:> Add-PnPFileToProvisioningTemplate -Path template.pnp -Source $sourceFilePath -Folder $targetFolder",
-       Remarks = "Adds a file to a PnP Provisioning Template",
+       Remarks = "Adds a file to a PnP Site Template",
        SortOrder = 1)]
     [CmdletExample(
        Code = @"PS:> Add-PnPFileToProvisioningTemplate -Path template.xml -Source $sourceFilePath -Folder $targetFolder",
-       Remarks = "Adds a file reference to a PnP Provisioning XML Template",
+       Remarks = "Adds a file reference to a PnP Site XML Template",
        SortOrder = 2)]
     [CmdletExample(
        Code = @"PS:> Add-PnPFileToProvisioningTemplate -Path template.pnp -Source ""./myfile.png"" -Folder ""folderinsite"" -FileLevel Published -FileOverwrite:$false",
-       Remarks = "Adds a file to a PnP Provisioning Template, specifies the level as Published and defines to not overwrite the file if it exists in the site.",
+       Remarks = "Adds a file to a PnP Site Template, specifies the level as Published and defines to not overwrite the file if it exists in the site.",
        SortOrder = 3)]
     [CmdletExample(
        Code = @"PS:> Add-PnPFileToProvisioningTemplate -Path template.pnp -Source $sourceFilePath -Folder $targetFolder -Container $container",
-       Remarks = "Adds a file to a PnP Provisioning Template with a custom container for the file",
+       Remarks = "Adds a file to a PnP Site Template with a custom container for the file",
        SortOrder = 4)]
     [CmdletExample(
         Code = @"PS:> Add-PnPFileToProvisioningTemplate -Path template.pnp -SourceUrl $urlOfFile",

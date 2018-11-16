@@ -9,11 +9,11 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
         Category = CmdletHelpCategory.Provisioning)]
     [CmdletExample(
        Code = @"PS:> $template = New-PnPProvisioningTemplate",
-       Remarks = "Creates a new instance of a provisioning template object.",
+       Remarks = "Creates a new instance of a site template object.",
        SortOrder = 1)]
-    public class NewProvisioningTemplate : PnPWebCmdlet
+    public class NewProvisioningTemplate : PSCmdlet
     {
-        protected override void ExecuteCmdlet()
+        protected override void ProcessRecord()
         {
             var result = new ProvisioningTemplate();
             WriteObject(result);
