@@ -67,7 +67,7 @@ namespace SharePointPnP.PowerShell.Commands
                 Path = System.IO.Path.Combine(SessionState.Path.CurrentFileSystemLocation.Path, Path);
             }
             // Load the template
-            var template = ReadSiteTemplate
+            var template = ReadProvisioningTemplate
                 .LoadProvisioningTemplateFromFile(Path,
                 TemplateProviderExtensions);
 
@@ -266,8 +266,8 @@ namespace SharePointPnP.PowerShell.Commands
             foreach (var list in SelectedWeb.Lists)
             {
                 input = input
-                    .ReplaceCaseInsensitive(list.Id.ToString("D"), "{listid:" + Regex.Escape(list.Title) + "}")
-                    .ReplaceCaseInsensitive(list.GetWebRelativeUrl(), "{listurl:" + Regex.Escape(list.Title) + "}");
+                    .ReplaceCaseInsensitive(list.Id.ToString("D"), "{listid:" + list.Title + "}")
+                    .ReplaceCaseInsensitive(list.GetWebRelativeUrl(), "{listurl:" + list.Title + "}");
             }
             return input.ReplaceCaseInsensitive(SelectedWeb.Url, "{site}")
                 .ReplaceCaseInsensitive(SelectedWeb.ServerRelativeUrl, "{site}")
