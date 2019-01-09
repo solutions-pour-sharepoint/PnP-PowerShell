@@ -25,7 +25,7 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
      [CmdletRelatedLink(
         Text ="Encoding", 
         Url = "https://msdn.microsoft.com/en-us/library/system.text.encoding_properties.aspx")]
-    public class ConvertSiteTemplate : PSCmdlet
+    public class ConvertProvisioningTemplate : PSCmdlet
     {
         [Parameter(Mandatory = true, Position = 0, ValueFromPipelineByPropertyName = true, ValueFromPipeline = true, HelpMessage = "Path to the xml file containing the site template")]
         public string Path;

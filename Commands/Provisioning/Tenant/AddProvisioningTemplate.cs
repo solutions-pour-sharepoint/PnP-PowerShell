@@ -12,14 +12,14 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning.Tenant
     [CmdletHelp("Adds a PnP Provisioning Template object to a tenant template",
         Category = CmdletHelpCategory.Provisioning, SupportedPlatform = CmdletSupportedPlatform.Online)]
     [CmdletExample(
-       Code = @"PS:> Add-PnpProvisioningTemplate -TenantTemplate $tenanttemplate -SiteTemplate $sitetemplate",
+       Code = @"PS:> Add-PnpProvisioningTemplate -TenantTemplate $tenanttemplate -ProvisioningTemplate $ProvisioningTemplate",
        Remarks = "Adds an existing site template to an existing tenant template object",
        SortOrder = 1)]
     public class AddProvisioningTemplate : PSCmdlet
     {
         [Parameter(Mandatory = true, HelpMessage = "The template to add to the tenant template")]
         [Alias("Template")]
-        public ProvisioningTemplate SiteTemplate;
+        public ProvisioningTemplate ProvisioningTemplate;
 
         [Parameter(Mandatory = true, HelpMessage = "The tenant template to add the template to", ValueFromPipeline = true)]
         [Alias("Hierarchy")]
@@ -27,11 +27,11 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning.Tenant
 
         protected override void ProcessRecord()
         {
-            if(TenantTemplate.Templates.FirstOrDefault(t => t.Id == SiteTemplate.Id) == null)
+            if(TenantTemplate.Templates.FirstOrDefault(t => t.Id == ProvisioningTemplate.Id) == null)
             {
-                TenantTemplate.Templates.Add(SiteTemplate);
+                TenantTemplate.Templates.Add(ProvisioningTemplate);
             } else { 
-                WriteError(new ErrorRecord(new Exception($"Template with ID {SiteTemplate.Id} already exists in hierarchy"), "DUPLICATETEMPLATE", ErrorCategory.InvalidData, SiteTemplate));
+                WriteError(new ErrorRecord(new Exception($"Template with ID {ProvisioningTemplate.Id} already exists in hierarchy"), "DUPLICATETEMPLATE", ErrorCategory.InvalidData, ProvisioningTemplate));
             }
         }
     }

@@ -2,7 +2,7 @@
 <pnp:Provisioning xmlns:pnp="http://schemas.dev.office.com/PnP/2016/05/ProvisioningSchema">
   <pnp:Preferences Generator="OfficeDevPnP.Core, Version=2.11.1701.0, Culture=neutral, PublicKeyToken=null" />
   <pnp:Templates ID="CONTAINER-TEMPLATE-F6E7ECB2634143318E7F6769250F5BF1">
-    <pnp:ProvisioningTemplate ID="TEMPLATE-F6E7ECB2634143318E7F6769250F5BF1" Version="1" BaseSiteTemplate="STS#0">
+    <pnp:ProvisioningTemplate ID="TEMPLATE-F6E7ECB2634143318E7F6769250F5BF1" Version="1" BaseProvisioningTemplate="STS#0">
       <pnp:Lists>
         <pnp:ListInstance Title="PnPTestList" Description="" DocumentTemplate="" TemplateType="100" Url="Lists/PnPTestList" MinorVersionLimit="0" MaxVersionLimit="0" DraftVersionVisibility="0" TemplateFeatureID="00bfea71-de22-43b2-a848-c05709900100" EnableFolderCreation="false">
           <pnp:ContentTypeBindings>

@@ -17,7 +17,7 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning
     [CmdletHelp("Saves a PnP site template to the file system",
         Category = CmdletHelpCategory.Provisioning)]
     [CmdletExample(
-       Code = @"PS:> Save-PnPSiteTemplate -InputInstance $template -Out .\template.pnp",
+       Code = @"PS:> Save-PnPProvisioningTemplate -InputInstance $template -Out .\template.pnp",
        Remarks = "Saves a PnP site template to the file system as a PnP file.",
        SortOrder = 1)]
     public class SaveProvisioningTemplate : PSCmdlet
