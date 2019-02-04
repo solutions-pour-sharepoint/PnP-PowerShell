@@ -5,6 +5,40 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
+## [3.6.1902.0]
+
+### Added
+- Added Clear-PnPDefaultColumnValues cmdlet
+- Added Remove-PnPSearchConfiguration cmdlet
+- Added Export-PnPClientSidePage to export a page to a Provisioning Template
+- Added Add-PnPSiteDesignTask to apply a site design to a site. Intended as a replacement for Invoke-PnPSiteDesign as it the task can handle more than 30 actions.
+- Added Get-PnPSiteDesignRun to retrieve the list of site designs applied to a site collection
+- Added Get-PnPSiteDesignRunStatus to retrieve a list of all site script actions executed for a specified site design applied to a site
+- Added Get-PnPSiteDesignTask to retrieve a list of all currently scheduled site design tasks.
+- Added Remove-PnPSiteDesignTask to remove a previously scheduled site design task.
+
+### Changed
+- Set-PnPDefaultColumnValues: Fixed character encoding issue on folders #1706
+- Fixed import of search configuration to tenant via string
+- Set-PnPTenantSite: Added support for setting default sharing and sharing permissions
+- ConvertTo-PnPClientSidePage: Added support for copying page metadata to the modern version of the page + parameter to clear the transformation cache
+
+## [3.5.1901.0]
+
+### Added
+- Added Reset-PnPFileVersion cmdlet
+
+### Changed
+
+- Add-PnPClientSidePageSection: Added support for section the section background of a client side page
+- Updated file and folder cmdlets to support special characters
+
+### Deprecated
+
+### Contributors
+- Eric Skaggs (skaggej)
+- Gautam Sheth (gautamdsheth)
+
 ## [3.4.1812.0]
 
 ### Added
@@ -455,7 +489,7 @@ jensotto
 **2015-09-21**
 
 * Added -Parameters parameter to Apply-SPOProvisioningTemplate. See help for the cmdlet for more info.
-* Renamed PageUrl parameter of Webpart cmdlets to ServerRelativePageUrl. Set PageUrl as parameter alias to not break existing scripts.
+* Renamed PageUrl parameter of web part cmdlets to ServerRelativePageUrl. Set PageUrl as parameter alias to not break existing scripts.
 
 **2015-09-17**
 
@@ -484,7 +518,7 @@ jensotto
 
 **2015-08-10**
 
-* Added Get-SPOWebPartXml cmdlet to export webpart XML from a page.
+* Added Get-SPOWebPartXml cmdlet to export web part XML from a page.
 
 **2015-08-07**
 
@@ -595,7 +629,7 @@ still works as before.
 
 **2015-01-07**
 
-* Introduced new Cmdlet: Get-SPOWebPartProperty to return webpart properties
+* Introduced new Cmdlet: Get-SPOWebPartProperty to return web part properties
 * Updated Set-SPOWebPartProperty cmdlet to support int values
 
 **2015-01-02**
