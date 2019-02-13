@@ -5,9 +5,31 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
+## [3.6.1902.2]
+
+### Added
+
+### Changed
+- Fixed issue where New-PnPSite would through a null reference exception when creating a site collection without associating it to a hubsite.
+- Fixed issue were Save-PnPTenantTemplate was not adding files the PnP file.
+- Fixed issue where Save-PnPTenantTemplate would not allow files larger than 10MB.
+
+### Contributors
+
+## [3.6.1902.1]
+
+### Added
+
+### Changed
+- Fixed Set-PnPTenantSite where the NoScriptSite parameter would always be set to false if not specified.
+
+### Contributors
+
+
 ## [3.6.1902.0]
 
 ### Added
+- Added initial support for SharePoint 2019
 - Added Clear-PnPDefaultColumnValues cmdlet
 - Added Remove-PnPSearchConfiguration cmdlet
 - Added Export-PnPClientSidePage to export a page to a Provisioning Template
@@ -16,12 +38,24 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Added Get-PnPSiteDesignRunStatus to retrieve a list of all site script actions executed for a specified site design applied to a site
 - Added Get-PnPSiteDesignTask to retrieve a list of all currently scheduled site design tasks.
 - Added Remove-PnPSiteDesignTask to remove a previously scheduled site design task.
+- Added -IncludeHiddenLists to Get-PnPProvisioningTemplate to optionally also extract hidden lists in a template.
+- Added -HubSiteId to New-PnPSite to associate the site with a hubsite at creation time
+- Added -Owners to New-PnPSite to set the owners while creating a modern team site.
 
 ### Changed
 - Set-PnPDefaultColumnValues: Fixed character encoding issue on folders #1706
 - Fixed import of search configuration to tenant via string
 - Set-PnPTenantSite: Added support for setting default sharing and sharing permissions
 - ConvertTo-PnPClientSidePage: Added support for copying page metadata to the modern version of the page + parameter to clear the transformation cache
+- Enable-PnPTelemetry and Disable-PnPTelemetry do not require a connection anymore.
+- Return more friendly exception if App Catalog does not exist when using Set-PnPStorageEntity, Get-PnPStorageEntity or Remove-PnPStorageEntity
+- Added -SystemUpdate flag to Set-PnPListItemPermission
+- Clean up temp data when using PEM string certificates, and support password on PEM string certificates.
+- Updated Set-PnPGroup to update both the Notes -and- the Description of a SharePoint group if using the -Description parameter
+
+### Contributors
+- Koen Zomers (KoenZomers)
+- Gautam Sheth (gautamdsheth)
 
 ## [3.5.1901.0]
 
