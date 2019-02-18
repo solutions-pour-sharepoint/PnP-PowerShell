@@ -4,7 +4,6 @@ using OfficeDevPnP.Core.Framework.Provisioning.Connectors;
 using OfficeDevPnP.Core.Framework.Provisioning.Model;
 using OfficeDevPnP.Core.Framework.Provisioning.Providers;
 using OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml;
-using SharePointPnP.PowerShell.Commands.Extensions;
 using SharePointPnP.PowerShell.Commands.Provisioning;
 using SharePointPnP.PowerShell.Commands.Utilities;
 using System;
@@ -13,7 +12,6 @@ using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using System.Text;
-using System.Text.RegularExpressions;
 using PnPFileLevel = OfficeDevPnP.Core.Framework.Provisioning.Model.FileLevel;
 using SPFile = Microsoft.SharePoint.Client.File;
 
@@ -131,10 +129,11 @@ namespace SharePointPnP.PowerShell.Commands
             };
 
             if (webParts != null) newFile.WebParts.AddRange(webParts);
-            if (properties != null) {
+            if (properties != null)
+            {
                 foreach (var property in properties)
                 {
-                    newFile.Properties.Add(property.Key,property.Value);
+                    newFile.Properties.Add(property.Key, property.Value);
                 }
             }
             template.Files.Add(newFile);
@@ -187,7 +186,6 @@ namespace SharePointPnP.PowerShell.Commands
                     WriteProgress(_progressFileProcessing);
                 }
 
-
                 using (var fi = SPFile.OpenBinaryDirect(ClientContext, file.ServerRelativeUrl))
                 using (var ms = new MemoryStream())
                 {
@@ -205,9 +203,9 @@ namespace SharePointPnP.PowerShell.Commands
                         _progressFileProcessing.StatusDescription = $"Extracting properties from {file.ServerRelativeUrl}";
                         properties = XmlPageDataHelper.ExtractProperties(
                             Encoding.UTF8.GetString(ms.ToArray())
-                            ).ToDictionary(p=>p.Key, p=>Tokenize(p.Value));
+                            ).ToDictionary(p => p.Key, p => Tokenize(p.Value));
                     }
-                   AddFileToTemplate(template, ms, folderWebRelativeUrl, file.Name, folderWebRelativeUrl, webParts, properties);
+                    AddFileToTemplate(template, ms, folderWebRelativeUrl, file.Name, folderWebRelativeUrl, webParts, properties);
                     _progressFileProcessing.PercentComplete = 100;
                     _progressFileProcessing.StatusDescription = $"Adding file {file.ServerRelativeUrl} to template";
                     _progressFileProcessing.RecordType = ProgressRecordType.Completed;
@@ -287,9 +285,13 @@ namespace SharePointPnP.PowerShell.Commands
 
             foreach (var list in SelectedWeb.Lists)
             {
-                input = input
-                    .ReplaceCaseInsensitive(list.Id.ToString("D"), "{listid:" + list.Title + "}")
-                    .ReplaceCaseInsensitive(list.GetWebRelativeUrl(), "{listurl:" + list.Title + "}");
+                var webRelativeUrl = list.GetWebRelativeUrl();
+                if (!webRelativeUrl.StartsWith("_catalogs", StringComparison.Ordinal))
+                {
+                    input = input
+                        .ReplaceCaseInsensitive(list.Id.ToString("D"), "{listid:" + list.Title + "}")
+                        .ReplaceCaseInsensitive(webRelativeUrl, "{listurl:" + list.Title + "}");
+                }
             }
             return input.ReplaceCaseInsensitive(SelectedWeb.Url, "{site}")
                 .ReplaceCaseInsensitive(SelectedWeb.ServerRelativeUrl, "{site}")
