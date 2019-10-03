@@ -21,21 +21,21 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning.Site
     [CmdletHelp("Adds a file to a PnP Provisioning Template",
         Category = CmdletHelpCategory.Provisioning)]
     [CmdletExample(
-       Code = @"PS:> Add-PnPFileToProvisioningTemplate -Path template.pnp -Source $sourceFilePath -Folder $targetFolder",
-       Remarks = "Adds a file to a PnP Site Template",
-       SortOrder = 1)]
+        Code = @"PS:> Add-PnPFileToProvisioningTemplate -Path template.pnp -Source $sourceFilePath -Folder $targetFolder",
+        Remarks = "Adds a file to a PnP Site Template",
+        SortOrder = 1)]
     [CmdletExample(
-       Code = @"PS:> Add-PnPFileToProvisioningTemplate -Path template.xml -Source $sourceFilePath -Folder $targetFolder",
-       Remarks = "Adds a file reference to a PnP Site XML Template",
-       SortOrder = 2)]
+        Code = @"PS:> Add-PnPFileToProvisioningTemplate -Path template.xml -Source $sourceFilePath -Folder $targetFolder",
+        Remarks = "Adds a file reference to a PnP Site XML Template",
+        SortOrder = 2)]
     [CmdletExample(
-       Code = @"PS:> Add-PnPFileToProvisioningTemplate -Path template.pnp -Source ""./myfile.png"" -Folder ""folderinsite"" -FileLevel Published -FileOverwrite:$false",
-       Remarks = "Adds a file to a PnP Site Template, specifies the level as Published and defines to not overwrite the file if it exists in the site.",
-       SortOrder = 3)]
+        Code = @"PS:> Add-PnPFileToProvisioningTemplate -Path template.pnp -Source ""./myfile.png"" -Folder ""folderinsite"" -FileLevel Published -FileOverwrite:$false",
+        Remarks = "Adds a file to a PnP Site Template, specifies the level as Published and defines to not overwrite the file if it exists in the site.",
+        SortOrder = 3)]
     [CmdletExample(
-       Code = @"PS:> Add-PnPFileToProvisioningTemplate -Path template.pnp -Source $sourceFilePath -Folder $targetFolder -Container $container",
-       Remarks = "Adds a file to a PnP Site Template with a custom container for the file",
-       SortOrder = 4)]
+        Code = @"PS:> Add-PnPFileToProvisioningTemplate -Path template.pnp -Source $sourceFilePath -Folder $targetFolder -Container $container",
+        Remarks = "Adds a file to a PnP Site Template with a custom container for the file",
+        SortOrder = 4)]
     [CmdletExample(
         Code = @"PS:> Add-PnPFileToProvisioningTemplate -Path template.pnp -SourceUrl ""Shared%20Documents/ProjectStatus.docs""",
         Remarks = "Adds a file to a PnP Provisioning Template retrieved from the currently connected site. The url can be server relative or web relative. If specifying a server relative url has to start with the current site url.",
@@ -46,8 +46,10 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning.Site
         SortOrder = 6)]
     public class AddFileToProvisioningTemplate : PnPWebCmdlet
     {
-        const string parameterSet_LOCALFILE = "Local File";
-        const string parameterSet_REMOTEFILE = "Remote File";
+        private const string parameterSet_LOCALFILE = "Local File";
+        private const string parameterSet_REMOTEFILE = "Remote File";
+        private const string parameterSet_LOCALFOLDER = "Local Folder";
+        private const string parameterSet_REMOTEFOLDER = "Remote Folder";
 
         [Parameter(Mandatory = true, Position = 0, HelpMessage = "Filename of the .PNP Open XML site template to read from, optionally including full path.")]
         public string Path;
@@ -55,10 +57,17 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning.Site
         [Parameter(Mandatory = true, Position = 1, ParameterSetName = parameterSet_LOCALFILE, HelpMessage = "The file to add to the in-memory template, optionally including full path.")]
         public string Source;
 
-        [Parameter(Mandatory = true, Position = 1, ParameterSetName = parameterSet_REMOTEFILE, HelpMessage = "The file to add to the in-memory template, specifying its url in the current connected Web.")]
+        [Parameter(Mandatory = true, Position = 1, ParameterSetName = parameterSet_REMOTEFILE, HelpMessage = "The folder where to search for files, to be added to the in-memory template, specifying its url in the current connected Web.")]
         public string SourceUrl;
 
+        [Parameter(Mandatory = true, Position = 1, ParameterSetName = parameterSet_LOCALFOLDER, HelpMessage = "The file to add to the in-memory template, optionally including full path.")]
+        public string SourceFolder;
+
+        [Parameter(Mandatory = true, Position = 1, ParameterSetName = parameterSet_REMOTEFOLDER, HelpMessage = "The local folder where to search for files to be added to the in-memory template.")]
+        public string SourceFolderUrl;
+
         [Parameter(Mandatory = true, Position = 2, ParameterSetName = parameterSet_LOCALFILE, HelpMessage = "The target Folder for the file to add to the in-memory template.")]
+        [Parameter(Mandatory = true, Position = 2, ParameterSetName = parameterSet_LOCALFOLDER, HelpMessage = "The target Folder for the files to add to the in-memory template.")]
         public string Folder;
 
         [Parameter(Mandatory = false, Position = 3, HelpMessage = "The target Container for the file to add to the in-memory template, optional argument.")]
@@ -91,47 +100,100 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning.Site
             {
                 throw new ApplicationException("Invalid template file!");
             }
-            // Add a file from the connected Web
-            if (this.ParameterSetName == parameterSet_REMOTEFILE)
+
+            if (ExtractWebParts && (this.ParameterSetName == parameterSet_REMOTEFILE || this.ParameterSetName == parameterSet_REMOTEFOLDER))
             {
-                if (ExtractWebParts)
-                {
-                    ClientContext.Load(SelectedWeb, web => web.Url, web => web.Id, web => web.ServerRelativeUrl);
-                    ClientContext.Load(((ClientContext)SelectedWeb.Context).Site, site => site.Id, site => site.ServerRelativeUrl, site => site.Url);
-                    ClientContext.Load(SelectedWeb.Lists, lists => lists.Include(l => l.Title, l => l.RootFolder.ServerRelativeUrl, l => l.Id));
-                }
+                ClientContext.Load(SelectedWeb, web => web.Url, web => web.Id, web => web.ServerRelativeUrl);
+                ClientContext.Load(((ClientContext)SelectedWeb.Context).Site, site => site.Id, site => site.ServerRelativeUrl, site => site.Url);
+                ClientContext.Load(SelectedWeb.Lists, lists => lists.Include(l => l.Title, l => l.RootFolder.ServerRelativeUrl, l => l.Id));
 
                 ClientContext.ExecuteQuery();
-
-                var sourceUri = new Uri(SourceUrl, UriKind.RelativeOrAbsolute);
-                var serverRelativeUrl =
-                    sourceUri.IsAbsoluteUri ? sourceUri.AbsolutePath :
-                    SourceUrl.StartsWith("/", StringComparison.Ordinal) ? SourceUrl :
-                    SelectedWeb.ServerRelativeUrl.TrimEnd('/') + "/" + SourceUrl;
-
-                var file = SelectedWeb.GetFileByServerRelativeUrl(serverRelativeUrl);
-                AddSPFileToTemplate(template, file);
             }
-            // Add a file from the file system
-            else
+            switch (this.ParameterSetName)
             {
-                if (!System.IO.Path.IsPathRooted(Source))
-                {
-                    Source = System.IO.Path.Combine(SessionState.Path.CurrentFileSystemLocation.Path, Source);
-                }
+                // Add a file from the connected Web
+                case parameterSet_REMOTEFILE:
+                    {
+                        var serverRelativeUrl = UrlToServerRelativeUrl(SourceUrl);
 
-                // Load the file and add it to the .PNP file
-                using (var fs = System.IO.File.OpenRead(Source))
-                {
-                    Folder = Folder.Replace('\\', '/');
+                        var file = SelectedWeb.GetFileByServerRelativeUrl(serverRelativeUrl);
+                        AddSPFileToTemplate(template, file);
+                        break;
+                    }
 
-                    var fileName = Source.IndexOf(System.IO.Path.DirectorySeparatorChar) > 0 
-                        ? Source.Substring(Source.LastIndexOf(System.IO.Path.DirectorySeparatorChar) + 1) 
-                        : Source;
-                    var container = !string.IsNullOrEmpty(Container) ? Container : string.Empty;
-                    AddFileToTemplate(template, fs, Folder, fileName, container);
-                }
+                case parameterSet_REMOTEFOLDER:
+                    {
+                        var serverRelativeUrl = UrlToServerRelativeUrl(SourceFolderUrl);
+
+                        var folder = SelectedWeb.GetFolderByServerRelativeUrl(serverRelativeUrl);
+                        var files = folder.Files;
+                        SelectedWeb.Context.Load(files);
+                        SelectedWeb.Context.ExecuteQueryRetry();
+                        foreach (var file in files)
+                        {
+                            AddSPFileToTemplate(template, file);
+                        }
+                        break;
+                    }
+
+                case parameterSet_LOCALFILE:
+                    {
+                        if (!System.IO.Path.IsPathRooted(Source))
+                        {
+                            Source = System.IO.Path.Combine(SessionState.Path.CurrentFileSystemLocation.Path, Source);
+                        }
+
+                        Folder = Folder.Replace('\\', '/');
+                        // Load the file and add it to the .PNP file
+                        AddLocalFile(template, Source, Folder, Container);
+
+                        break;
+                    }
+
+                case parameterSet_LOCALFOLDER:
+                    {
+                        if (!System.IO.Path.IsPathRooted(SourceFolder))
+                        {
+                            SourceFolder = System.IO.Path.Combine(SessionState.Path.CurrentFileSystemLocation.Path, SourceFolder);
+                        }
+
+                        var files = System.IO.Directory.GetFiles(SourceFolder);
+                        var container = Container ?? System.IO.Path.GetFileName(Folder); // Default to name of the targeted folder
+                        Folder = Folder.Replace('\\', '/');
+                        foreach (var file in files)
+                        {
+                            AddLocalFile(template, file, Folder, container);
+                        }
+
+                        break;
+                    }
             }
+        }
+
+        private void AddLocalFile(ProvisioningTemplate template, string source, string folder, string container)
+        {
+            if (template == null) throw new ArgumentNullException(nameof(template));
+            if (source == null) throw new ArgumentNullException(nameof(source));
+
+            using (var fs = System.IO.File.OpenRead(source))
+            {
+                var fileName = source.IndexOf(System.IO.Path.DirectorySeparatorChar) > 0
+                    ? source.Substring(source.LastIndexOf(System.IO.Path.DirectorySeparatorChar) + 1)
+                    : source;
+                AddFileToTemplate(template, fs, folder, fileName, container ?? string.Empty);
+            }
+        }
+
+        private string UrlToServerRelativeUrl(string url)
+        {
+            if (url == null) throw new ArgumentNullException(nameof(url));
+
+            var sourceFolderUri = new Uri(url, UriKind.RelativeOrAbsolute);
+            var serverRelativeUrl =
+                sourceFolderUri.IsAbsoluteUri ? sourceFolderUri.AbsolutePath :
+                url.StartsWith("/", StringComparison.Ordinal) ? url :
+                SelectedWeb.ServerRelativeUrl.TrimEnd('/') + "/" + url;
+            return serverRelativeUrl;
         }
 
         private void AddSPFileToTemplate(ProvisioningTemplate template, SPFile file)
@@ -191,6 +253,7 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning.Site
                 }
             }
         }
+
         private string Tokenize(string input)
         {
             if (string.IsNullOrEmpty(input)) return input;
@@ -215,12 +278,12 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning.Site
 
         private void AddFileToTemplate(
             ProvisioningTemplate template,
-            Stream fs, 
+            Stream fs,
             string folder,
-            string fileName, 
+            string fileName,
             string container,
             IEnumerable<WebPart> webParts = null
-            )
+                                      )
         {
             if (template == null) throw new ArgumentNullException(nameof(template));
             if (fs == null) throw new ArgumentNullException(nameof(fs));
@@ -235,8 +298,8 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning.Site
             }
 
             var existing = template.Files.FirstOrDefault(f =>
-              f.Src == $"{container}/{fileName}"
-              && f.Folder == folder);
+                f.Src == $"{container}/{fileName}"
+                && f.Folder == folder);
 
             if (existing != null)
                 template.Files.Remove(existing);
