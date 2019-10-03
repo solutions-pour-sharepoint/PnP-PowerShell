@@ -49,7 +49,7 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning.Site
         Remarks = "Adds the content of a remote folder to a PnP Provisioning Template retrieved from the currently connected site. The url can be server relative or web relative. If specifying a server relative url has to start with the current site url.",
         SortOrder = 7)]
     [CmdletExample(
-        Code = @"PS:> Add-PnPFileToProvisioningTemplate -Path template.pnp -SourceFolder ""c:\\data\reports"" -Folder ""Shared Documents""",
+        Code = @"PS:> Add-PnPFileToProvisioningTemplate -Path template.pnp -SourceFolder ""c:\\data\\reports"" -Folder ""Shared Documents""",
         Remarks = "Adds the content of a local folder to a PnP Provisioning Template retrieved from the currently connected site.",
         SortOrder = 8)]
     public class AddFileToProvisioningTemplate : PnPWebCmdlet
