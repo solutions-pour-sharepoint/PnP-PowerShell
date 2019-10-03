@@ -167,19 +167,13 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning.Site
             {
                 foreach (var spwp in SelectedWeb.GetWebParts(file.ServerRelativeUrl))
                 {
-                    spwp.EnsureProperties(wp => wp.WebPart
-#if !SP2016 // Missing ZoneId property in SP2016 version of the CSOM Library
-                , wp => wp.ZoneId
-#endif
-                );
+                    spwp.EnsureProperties(wp => wp.WebPart, wp => wp.ZoneId);
                     yield return new WebPart
                     {
                         Contents = Tokenize(SelectedWeb.GetWebPartXml(spwp.Id, file.ServerRelativeUrl)),
                         Order = (uint)spwp.WebPart.ZoneIndex,
                         Title = spwp.WebPart.Title,
-#if !SP2016 // Missing ZoneId property in SP2016 version of the CSOM Library
                         Zone = spwp.ZoneId
-#endif
                     };
                 }
             }
