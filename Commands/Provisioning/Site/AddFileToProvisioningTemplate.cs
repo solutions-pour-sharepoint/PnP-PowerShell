@@ -44,6 +44,14 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning.Site
         Code = @"PS:> Add-PnPFileToProvisioningTemplate -Path template.pnp -SourceUrl ""SitePages/Home.aspx"" -ExtractWebParts",
         Remarks = "Adds a file to a PnP Provisioning Template retrieved from the currently connected site. If the file is a classic page, also extract its webparts. The url can be server relative or web relative. If specifying a server relative url has to start with the current site url.",
         SortOrder = 6)]
+    [CmdletExample(
+        Code = @"PS:> Add-PnPFileToProvisioningTemplate -Path template.pnp -SourceFolderUrl ""Shared Documents""",
+        Remarks = "Adds the content of a remote folder to a PnP Provisioning Template retrieved from the currently connected site. The url can be server relative or web relative. If specifying a server relative url has to start with the current site url.",
+        SortOrder = 7)]
+    [CmdletExample(
+        Code = @"PS:> Add-PnPFileToProvisioningTemplate -Path template.pnp -SourceFolder ""c:\\data\reports"" -Folder ""Shared Documents""",
+        Remarks = "Adds the content of a local folder to a PnP Provisioning Template retrieved from the currently connected site.",
+        SortOrder = 8)]
     public class AddFileToProvisioningTemplate : PnPWebCmdlet
     {
         private const string parameterSet_LOCALFILE = "Local File";
