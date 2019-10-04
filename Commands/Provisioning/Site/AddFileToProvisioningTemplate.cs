@@ -88,6 +88,7 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning.Site
         public SwitchParameter FileOverwrite = true;
 
         [Parameter(Mandatory = false, Position = 6, ParameterSetName = parameterSet_REMOTEFILE, HelpMessage = "Include webparts if the file is a page")]
+        [Parameter(Mandatory = false, Position = 6, ParameterSetName = parameterSet_REMOTEFOLDER, HelpMessage = "Include webparts if the files are pages")]
         public SwitchParameter ExtractWebParts = true;
 
         [Parameter(Mandatory = false, Position = 4, HelpMessage = "Allows you to specify ITemplateProviderExtension to execute while loading the template.")]
