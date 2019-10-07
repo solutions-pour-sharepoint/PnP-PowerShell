@@ -12,6 +12,9 @@ using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using System.Net;
+using System.Xml;
+using System.Xml.Linq;
+using System.Xml.XPath;
 using PnPFileLevel = OfficeDevPnP.Core.Framework.Provisioning.Model.FileLevel;
 using SPFile = Microsoft.SharePoint.Client.File;
 
@@ -58,6 +61,8 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning.Site
         private const string parameterSet_REMOTEFILE = "Remote File";
         private const string parameterSet_LOCALFOLDER = "Local Folder";
         private const string parameterSet_REMOTEFOLDER = "Remote Folder";
+        private const string webpartNSV2 = "http://schemas.microsoft.com/WebPart/v2";
+        private const string webpartNSV3 = "http://schemas.microsoft.com/WebPart/v3";
 
         [Parameter(Mandatory = true, Position = 0, HelpMessage = "Filename of the .PNP Open XML site template to read from, optionally including full path.")]
         public string Path;
@@ -88,6 +93,7 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning.Site
         public SwitchParameter FileOverwrite = true;
 
         [Parameter(Mandatory = false, Position = 6, ParameterSetName = parameterSet_REMOTEFILE, HelpMessage = "Include webparts if the file is a page")]
+        [Parameter(Mandatory = false, Position = 6, ParameterSetName = parameterSet_REMOTEFOLDER, HelpMessage = "Include webparts if the files are pages")]
         public SwitchParameter ExtractWebParts = true;
 
         [Parameter(Mandatory = false, Position = 4, HelpMessage = "Allows you to specify ITemplateProviderExtension to execute while loading the template.")]
@@ -251,15 +257,48 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning.Site
                 foreach (var spwp in SelectedWeb.GetWebParts(file.ServerRelativeUrl))
                 {
                     spwp.EnsureProperties(wp => wp.WebPart, wp => wp.ZoneId);
+                    var webPartDefinition = XElement.Parse(SelectedWeb.GetWebPartXml(spwp.Id, file.ServerRelativeUrl), LoadOptions.PreserveWhitespace);
+                    var tokenizedDefinition = Tokenize(webPartDefinition);
                     yield return new WebPart
                     {
-                        Contents = Tokenize(SelectedWeb.GetWebPartXml(spwp.Id, file.ServerRelativeUrl)),
+                        Contents = tokenizedDefinition,
                         Order = (uint)spwp.WebPart.ZoneIndex,
                         Title = spwp.WebPart.Title,
                         Zone = spwp.ZoneId
                     };
                 }
             }
+        }
+
+        private static XmlNamespaceManager g_nsMgr = InitNamespaceManager();
+
+        private static XmlNamespaceManager InitNamespaceManager()
+        {
+            var result = new XmlNamespaceManager(new NameTable());
+            result.AddNamespace("v3", webpartNSV3);
+            result.AddNamespace("v2", webpartNSV2);
+            return result;
+        }
+
+        private string Tokenize(XElement webPartDefinition)
+        {
+            var propNodes = webPartDefinition.Name.Namespace == webpartNSV2 ?
+                webPartDefinition.Elements() :
+                webPartDefinition.XPathSelectElements("v3:webPart/v3:data/v3:properties/v3:property", g_nsMgr);
+
+            foreach (var propNode in propNodes)
+            {
+                if (propNode.FirstNode is XCData cdataValue)
+                {
+                    propNode.ReplaceNodes(new XCData(Tokenize(cdataValue.Value)));
+                }
+                else if (propNode.Value.Length > 0)
+                {
+                    propNode.Value = Tokenize(propNode.Value);
+                }
+            }
+
+            return webPartDefinition.ToString();
         }
 
         private string Tokenize(string input)
@@ -272,8 +311,8 @@ namespace SharePointPnP.PowerShell.Commands.Provisioning.Site
                 if (!webRelativeUrl.StartsWith("_catalogs", StringComparison.Ordinal))
                 {
                     input = input
-                        .ReplaceCaseInsensitive(list.Id.ToString("D"), "{listid:" + list.Title + "}")
-                        .ReplaceCaseInsensitive(webRelativeUrl, "{listurl:" + list.Title + "}");
+                        .ReplaceCaseInsensitive(list.Id.ToString("D"), "{listid:" + list.Title + "}");
+                    //.ReplaceCaseInsensitive(webRelativeUrl, "{listurl:" + list.Title + "}");
                 }
             }
             return input.ReplaceCaseInsensitive(SelectedWeb.Url, "{site}")
