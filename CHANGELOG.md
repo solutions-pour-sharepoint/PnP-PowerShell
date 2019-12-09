@@ -5,10 +5,70 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [Unreleased]
+## [3.16.1912.0]
 
 ### Added
 
+- Add-PnPTeamsTeam: new cmdlet that creates a Teams team for the current, Office 365 group connected, site collection
+- Added Get-PnPTenantId to retrieve the current tenant id.
+- ConvertTo-PnPClientSidePage: Added support for enforcing the specified target page folder via `-TargetPageFolderOverridesDefaultFolder`
+- ConvertTo-PnPClientSidePage: Added support for Delve blog page modernization via the `-DelveBlogPage` and `-DelveKeepSubTitle ` parameters
+
+### Changed 
+
+- Added various additional switches and options to Set-PnPTenantSite
+- Added -Wait parameter to New-PnPSite which will wait until the site creation process has been completely finished and all artifacts are present.
+- Fixes issue with App Only with certificate and context cloning. Now Apply-PnPTenantTemplate works as expected.
+- Added CorrelationId and TimeStampUtc to output of Get-PnPException which can help in analyzing ULS entries.
+- ConvertTo-PnPClientSidePage: The `-Identity` parameter now also accepts the item id as value to find a page
+
+### Contributors
+
+## [3.15.1911.0]
+
+### Added
+
+- Added Request-PnPAccessToken to retrieve an OAuth2 access token using the password grant.
+- Added additional properties to Set-PnPHubSite
+- Added Get-PnPHubSiteChild cmdlet to list all child sites of a hubsite
+- ConvertTo-PnPClientSidePage: Added support for user mapping via `-UserMappingFile, `-LDAPConnectionString` and `-SkipUserMapping` parameters  #2340
+- ConvertTo-PnPClientSidePage: Added support for defining the target folder of a transformed page via `-TargetPageFolder`
+- Added Get-PnPSearchSettings to retreive current search settings for a site
+- Added Set-PnPSearchSettings to set search related settings on a site
+
+### Changed
+
+- Cmdlets related to provisioning and tenant templates now output more detailed error information in case of a schema issue.
+- Fixes issue where site design was not being applied when using New-PnPSite
+- Fixed incorrect usage of SwitchParameter in Set-PnPSite cmdlet
+- Fixed issue when connecting to single level domain URLs
+- Disabled TimeZone as mandatory parameter for New-PnPTenantSite when using an on-premises version of PnP PowerShell
+
+### Contributors
+
+- Gautam Sheth [gautamdsheth]
+- Koen Zomers [KoenZomers]
+- Laurens Hoogendoorn [laurens1984]
+- Jens Otto Hatlevold [jensotto]
+- Paul Bullock [pkbullock]
+
+## [3.14.1910.1]
+
+### Added
+
+- ConvertTo-PnPClientSidePage: Added support for logging to console via `-LogType Console`
+- Copy-PnPFile: Fixes (#2300)
+- ConvertTo-PnPClientSidePage: Added support for controlling the target page name is any cross site transformation (so wiki, web part, blog in addition the already existing option for publishing pages) via the `-TargetPageName` parameter
+
+### Changed
+
+### Contributors
+
+## [3.14.1910.0]
+
+### Added
+
+- Added Set-PnPFolderPermission to set specific folder permissions
 - ConvertTo-PnPClientSidePage: Added support for keeping the source page Author, (Editor), Created and Modified page properties (only when source page lives in SPO) (KeepPageCreationModificationInformation parameter)
 - ConvertTo-PnPClientSidePage: Added support for posting the created page as news (PostAsNews parameter)
 - ConvertTo-PnPClientSidePage: Added support for modernizing blog pages (BlogPage parameter)
@@ -17,13 +77,24 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Several documentation fixes
+- Add-PnPClientSideWebPart now also works for SP2019
+- Added -List parameter to Get-PnPFolder to retrieve all folders in a list
+- Added owner paramter to New-PnPSite when create Communications site
+- Fixed issues after static code analysis
 - Added -ThumbnailUrl parameter to Set-PnPClientSidePage
 - ConvertTo-PnPClientSidePage: AddTableListImageAsImageWebPart default set to true to align with similar change in the page transformation framework
 - ConvertTo-PnPClientSidePage: moved log flushing to finally block to ensure it happens in case of something unexpected
 
 ### Contributors
 
+- Aleksandr SaPozhkov [shurick81]
+- Garry Trinder [garrytrinder]
+- Koen Zomers [KoenZomers]
+- Gautam Sheth [gautamdsheth]
+- Giacomo Pozzoni [jackpoz]
 - Paul Bullock [pkbullock]
+- Andres Mariano Gorzelany [get-itips]
 
 ## [3.13.1909.0]
 
